@@ -80,8 +80,7 @@ const InputWithSlider: FC<IInputWithSliderProps> = ({
             <Popover.Content accessibilityLabel="Delete Customerd" w={wp(60)}>
               <Popover.Arrow bgColor={theme.backgroundHover.get()} />
               <Popover.Body bgColor={theme.backgroundHover.get()}>
-                <Text
-                  color={systemTheme === 'dark' ? '$foreground' : '$background'}
+                <Text                                    
                   fontFamily={'$heading'}
                   fontSize={FontSizes.size15}
                   lineHeight={'$1'}

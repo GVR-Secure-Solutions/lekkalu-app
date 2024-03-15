@@ -12,6 +12,7 @@ interface IInputWithSliderProps {
   label: string
   containerStyle?: StyleProp<ViewStyle>
   sliderMaxValue: number
+  sliderMinValue: number
   defaultValue?: string
   setValue: Dispatch<SetStateAction<string>>
   showInfoTooltip?: boolean
@@ -25,6 +26,7 @@ const InputWithSlider: FC<IInputWithSliderProps> = ({
   containerStyle,
   setValue,
   sliderMaxValue = 100,
+  sliderMinValue = 0,
   defaultValue = '0',
   tooltipText = '',
   showInfoTooltip = false,
@@ -100,7 +102,7 @@ const InputWithSlider: FC<IInputWithSliderProps> = ({
       />
       <Slider
         style={styles.slider}
-        minimumValue={0}
+        minimumValue={sliderMinValue}
         maximumValue={sliderMaxValue}
         minimumTrackTintColor="#003562"
         maximumTrackTintColor="#e1e1e1"

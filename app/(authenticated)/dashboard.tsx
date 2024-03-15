@@ -53,7 +53,7 @@ const Dashboard = () => {
       <Text mb={hp(2)} fontSize={FontSizes.size26} fontFamily={'$heading'}>
         Browse Features
       </Text>
-      <View fd="row" ai="center" columnGap={wp(3)}>
+      <View fd="row" ai="center" columnGap={wp(3)} flexWrap='wrap' rowGap={wp(3)} justifyContent='space-between'>
         {features.map((item, index) => (
           <FeatureCard
             onPress={() => handleOnPressFeature(item.title)}

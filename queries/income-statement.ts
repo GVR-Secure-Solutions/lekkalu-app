@@ -25,7 +25,7 @@ interface APIAddIncomeStatementPayload {
   amount: string
 }
 
-const getIncomeSouce = () => {
+export const getIncomeSouce = () => {
   return apiClient.get<APIIncomeSourceItemType[]>('/income_source/')
 }
 

@@ -1,6 +1,6 @@
 import { InputField } from '@/types/input-fields'
 
-const getAddScenarioInputs = (liability: any, assets: any): InputField[] => {
+const getAddScenarioInputs = (liability: any, assets: any, income: any): InputField[] => {
   return [
     {
       id: 'name',
@@ -11,17 +11,22 @@ const getAddScenarioInputs = (liability: any, assets: any): InputField[] => {
     {
       id: 'liabilities',
       label: 'Liabilities',
-      type: 'select',
+      type: 'multi-select',
       options: liability || [],
-      valueKey: 'value',
       required: true,
     },
     {
       id: 'assets',
       label: 'Assets',
-      type: 'select',
+      type: 'multi-select',
       options: assets || [],
-      valueKey: 'value',
+      required: true,
+    },
+    {
+      id: 'income',
+      label: 'Income',
+      type: 'multi-select',
+      options: income || [],
       required: true,
     },
   ]

@@ -15,6 +15,8 @@ import { BALANCE_SHEET } from '@/utils/query-keys'
 import { getAddScenarioInputs } from '@/utils/scenarios'
 import InputFields from '@/components/input-fields/input-fields'
 import { AddScenarioSchemaType, addScenarioSchema } from '@/schema/scenarios'
+import { INCOME_STATEMENT_QUERY_KEYS } from '@/utils/query-keys/income-statement'
+import { getIncomeSouce } from '@/queries/income-statement'
 
 const AddScenarios = () => {
   const insets = useSafeAreaInsets()
@@ -24,11 +26,25 @@ const AddScenarios = () => {
   const { data: assets } = useQuery({
     queryKey: [BALANCE_SHEET.ASSETS],
     queryFn: fetchPhysicalAssets,
+    select(data) {
+      return data.map((each) => ({ label: each?.name, value: each?.id }))
+    },
   })
 
   const { data: liabilities } = useQuery({
     queryKey: [BALANCE_SHEET.LIABILITIES],
     queryFn: fetchLiabilities,
+    select(data) {
+      return data.map((each) => ({ label: each?.name, value: each?.id }))
+    },
+  })
+
+  const { data: income } = useQuery({
+    queryKey: [INCOME_STATEMENT_QUERY_KEYS.INCOME_SOURCE],
+    queryFn: getIncomeSouce,
+    select(data) {
+      return data?.data?.map((each) => ({ label: each?.name, value: each?.id }))
+    },
   })
 
   const {
@@ -38,7 +54,10 @@ const AddScenarios = () => {
     resolver: zodResolver(addScenarioSchema),
   })
 
-  const addScenarioInputs = useMemo(() => getAddScenarioInputs(liabilities, assets), [assets, liabilities])
+  const addScenarioInputs = useMemo(
+    () => getAddScenarioInputs(liabilities, assets, income),
+    [assets, liabilities, income],
+  )
 
   return (
     <View f={1} pt={insets.top + hp(2)} bg="$backgroundHover">
@@ -57,8 +76,9 @@ const AddScenarios = () => {
           bg="$primary"
           color="white"
           mt={hp(2)}
+          mb={hp(5)}
         >
-          {isEdit ? 'Edit Goal' : 'Create Goal'}
+          {isEdit ? 'Edit Scenario' : 'Create Scenario'}
         </Button>
       </KeyboardScrollView>
     </View>

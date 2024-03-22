@@ -1,12 +1,9 @@
 import z from 'zod'
 
-const addScenarioSchema = z.object({
+const addScenarioSchemas = z.object({
   name: z.string(),
-  assets: z.array(z.string()),
-  liabilities: z.array(z.string()),
-  income: z.array(z.string()),
 })
 
-type AddScenarioSchemaType = z.infer<typeof addScenarioSchema>
+type AddScenarioSchemas = z.infer<typeof addScenarioSchemas>
 
-export { AddScenarioSchemaType, addScenarioSchema }
+export { AddScenarioSchemas, addScenarioSchemas }

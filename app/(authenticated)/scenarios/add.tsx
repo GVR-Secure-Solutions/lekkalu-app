@@ -2,62 +2,67 @@ import React, { useMemo } from 'react'
 import { StyleSheet } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { View, Text, Button } from 'tamagui'
-import { useQuery } from '@tanstack/react-query'
 import { router, useLocalSearchParams } from 'expo-router'
+import { useMutation } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { hp, wp } from '@/utils/responsive'
 import BackButton from '@/components/back-button'
 import { FontSizes } from '@/utils/fonts'
 import KeyboardScrollView from '@/components/keyboard-scroll-view/keyboard-scroll-view'
-import { fetchLiabilities, fetchPhysicalAssets } from '@/queries/balance-sheet'
-import { BALANCE_SHEET } from '@/utils/query-keys'
 import { getAddScenarioInputs } from '@/utils/scenarios'
 import InputFields from '@/components/input-fields/input-fields'
-import { AddScenarioSchemaType, addScenarioSchema } from '@/schema/scenarios'
-import { INCOME_STATEMENT_QUERY_KEYS } from '@/utils/query-keys/income-statement'
-import { getIncomeSouce } from '@/queries/income-statement'
+import { AddScenarioSchemas, addScenarioSchemas } from '@/schema/scenarios'
+import { createScenarios, editScenario as updateScenario } from '@/queries/scenario'
+import { Scenario } from '@/types/scenarios'
+import { queryClient } from '@/utils/query-client'
+import { SCENARIO } from '@/utils/query-keys/scenarios'
 
 const AddScenarios = () => {
   const insets = useSafeAreaInsets()
   const params = useLocalSearchParams()
   const isEdit: boolean = !!params?.edit
 
-  const { data: assets } = useQuery({
-    queryKey: [BALANCE_SHEET.ASSETS],
-    queryFn: fetchPhysicalAssets,
-    select(data) {
-      return data.map((each) => ({ label: each?.name, value: each?.id }))
+  const { mutate: addScenario } = useMutation({
+    mutationFn: createScenarios,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [SCENARIO.SCENARIO] })
+      router.push('/(authenticated)/scenarios/')
     },
   })
 
-  const { data: liabilities } = useQuery({
-    queryKey: [BALANCE_SHEET.LIABILITIES],
-    queryFn: fetchLiabilities,
-    select(data) {
-      return data.map((each) => ({ label: each?.name, value: each?.id }))
+  const editScenarioDetail = params?.scenarioDetails ? JSON.parse(params?.scenarioDetails as any) : null
+
+  const { mutate: editScenario } = useMutation({
+    mutationFn: (values: Partial<Scenario>) => updateScenario(+editScenarioDetail?.id, values),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [SCENARIO.SCENARIO] })
+      router.push('/(authenticated)/scenarios/')
     },
   })
 
-  const { data: income } = useQuery({
-    queryKey: [INCOME_STATEMENT_QUERY_KEYS.INCOME_SOURCE],
-    queryFn: getIncomeSouce,
-    select(data) {
-      return data?.data?.map((each) => ({ label: each?.name, value: each?.id }))
-    },
-  })
+  const defaultFormValues = {
+    name: isEdit ? editScenarioDetail?.name : undefined,
+  }
 
   const {
     control,
+    handleSubmit,
     formState: { errors },
-  } = useForm<AddScenarioSchemaType>({
-    resolver: zodResolver(addScenarioSchema),
+  } = useForm<AddScenarioSchemas>({
+    resolver: zodResolver(addScenarioSchemas),
+    defaultValues: defaultFormValues,
   })
 
-  const addScenarioInputs = useMemo(
-    () => getAddScenarioInputs(liabilities, assets, income),
-    [assets, liabilities, income],
-  )
+  const addScenarioInputs = useMemo(() => getAddScenarioInputs(), [])
+
+  const handleScenarioFormSubmit = (values: AddScenarioSchemas) => {
+    if (isEdit) {
+      editScenario(values)
+    } else {
+      addScenario(values)
+    }
+  }
 
   return (
     <View f={1} pt={insets.top + hp(2)} bg="$backgroundHover">
@@ -72,7 +77,7 @@ const AddScenarios = () => {
         <Button
           fontSize={FontSizes.size18}
           h={hp(5.5)}
-          //   onPress={handleSubmit(handleAddGoal)}
+          onPress={handleSubmit(handleScenarioFormSubmit)}
           bg="$primary"
           color="white"
           mt={hp(2)}

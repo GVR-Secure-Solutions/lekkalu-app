@@ -3,43 +3,22 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { View, Text } from 'tamagui'
 import { TouchableOpacity, StyleSheet, FlatList } from 'react-native'
 import { Plus } from '@tamagui/lucide-icons'
+import { useQuery } from '@tanstack/react-query'
 import { router } from 'expo-router'
 import { hp, wp } from '@/utils/responsive'
 import { THEME_COLORS } from '@/utils/theme'
 import BackButton from '@/components/back-button'
 import { FontSizes } from '@/utils/fonts'
 import EachScenario from '@/components/each-scenario'
-
-const data = [
-  {
-    id: 1,
-    name: 'Want to invest with current salary',
-    userName: 'Reacter',
-    password: 'whyshouldbepasswordsent',
-  },
-  {
-    id: 2,
-    name: 'I have mortgage, should i invest?',
-    userName: 'Reacter',
-    password: 'whyshouldbepasswordsent',
-  },
-  {
-    id: 3,
-    name: 'Important investment, could lose everything i ever owned.',
-    userName: 'Reacter',
-    password: 'whyshouldbepasswordsent',
-  },
-  {
-    id: 4,
-    name: 'Nothing to lose, suggest how should i invest my money.',
-    userName: 'Reacter',
-    password: 'whyshouldbepasswordsent',
-  },
-]
+import { SCENARIO } from '@/utils/query-keys/scenarios'
+import { fetchScenarios } from '@/queries/scenario'
 
 const Scenarios = () => {
   const insets = useSafeAreaInsets()
-  const isLoading = false
+  const { data, isLoading } = useQuery({
+    queryKey: [SCENARIO.SCENARIO],
+    queryFn: fetchScenarios,
+  })
   return (
     <View f={1} pt={insets.top + hp(2)} bg="$backgroundHover">
       <View fd="row" ai="center" columnGap={wp(4)} mx={wp(5)} mb={wp(10)}>

@@ -1,18 +1,46 @@
 import React from 'react'
 import { TouchableOpacity, StyleSheet } from 'react-native'
 import { useTheme, Text, View } from 'tamagui'
+import { useMutation } from '@tanstack/react-query'
+import { router } from 'expo-router'
+import { useToast } from 'native-base'
 import { hp, wp } from '@/utils/responsive'
 import EditDeleteMenu from '../edit-delete-menu'
+import { deleteScenario } from '@/queries/scenario'
+import { SCENARIO } from '@/utils/query-keys/scenarios'
+import { queryClient } from '@/utils/query-client'
 
 export default function EachScenario({ item }: any) {
   const theme = useTheme()
+  const toast = useToast()
+
+  const { mutate: removeScenario } = useMutation({
+    mutationFn: deleteScenario,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [SCENARIO.SCENARIO],
+      })
+      toast.show({ title: 'Scenario deleted successfully' })
+    },
+    onError: () => {
+      toast.show({ title: 'Something went wrong!' })
+    },
+  })
+
+  const handleEditScenario = () => {
+    router.push({
+      pathname: '/(authenticated)/scenarios/add',
+      params: { edit: String(true), scenarioDetails: JSON.stringify(item) },
+    })
+  }
+
   return (
     <TouchableOpacity onPress={() => {}} style={[styles.container, { backgroundColor: theme.background.get() }]}>
       <View width={'$20'}>
         <Text>{item?.name}</Text>
       </View>
       <View als={'flex-start'}>
-        <EditDeleteMenu onEdit={() => {}} onDelete={() => {}} />
+        <EditDeleteMenu onEdit={handleEditScenario} onDelete={() => removeScenario(item?.id)} />
       </View>
     </TouchableOpacity>
   )

@@ -45,6 +45,13 @@
             "useFrameworks": "static"
           }
         }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/adaptive-icon.png",
+          "color":"#0F4B8F"
+        }
       ]
     ],
     "scheme": "com.lekkalu-app.lekkalu-app",

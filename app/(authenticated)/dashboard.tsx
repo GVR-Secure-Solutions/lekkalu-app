@@ -8,6 +8,7 @@ import FeatureCard from '@/components/feature-card'
 import { hp, wp } from '@/utils/responsive'
 import { THEME_COLORS } from '@/utils/theme'
 import { FontSizes } from '@/utils/fonts'
+import NotificationReminder from '@/components/notification-reminder/NotificationReminder'
 
 const features = [
   {
@@ -42,6 +43,8 @@ const Dashboard = () => {
   }
 
   return (
+    <>
+    <NotificationReminder />
     <View p={wp(4)} f={1} bg="$backgroundHover">
       <Text mb={hp(2)} fontSize={FontSizes.size26} fontFamily={'$heading'}>
         Browse Features
@@ -57,6 +60,7 @@ const Dashboard = () => {
         ))}
       </View>
     </View>
+    </>
   )
 }
 

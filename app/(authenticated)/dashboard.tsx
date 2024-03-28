@@ -2,7 +2,7 @@ import React from 'react'
 import { View, Text } from 'tamagui'
 import { Feather, FontAwesome } from '@expo/vector-icons'
 import { router } from 'expo-router'
-import { Target } from '@tamagui/lucide-icons'
+import { BookCopy, Target } from '@tamagui/lucide-icons'
 
 import FeatureCard from '@/components/feature-card'
 import { hp, wp } from '@/utils/responsive'
@@ -22,6 +22,10 @@ const features = [
     title: 'Goals',
     image: <Target size={wp(7)} color={THEME_COLORS.primary[100]} />,
   },
+  {
+    title: 'Scenarios',
+    image: <BookCopy size={wp(7)} color={THEME_COLORS.primary[100]} />,
+  },
 ]
 
 const Dashboard = () => {
@@ -36,6 +40,9 @@ const Dashboard = () => {
       case 'Goals':
         router.push('/(authenticated)/goals')
         break
+      case 'Scenarios':
+        router.push('/(authenticated)/scenarios')
+        break
       default:
         break
     }
@@ -46,7 +53,7 @@ const Dashboard = () => {
       <Text mb={hp(2)} fontSize={FontSizes.size26} fontFamily={'$heading'}>
         Browse Features
       </Text>
-      <View fd="row" ai="center" columnGap={wp(3)}>
+      <View fd="row" ai="center" columnGap={wp(3)} flexWrap="wrap" rowGap={wp(3)}>
         {features.map((item, index) => (
           <FeatureCard
             onPress={() => handleOnPressFeature(item.title)}

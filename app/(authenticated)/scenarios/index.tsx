@@ -15,7 +15,7 @@ import { fetchScenarios } from '@/queries/scenario'
 
 const Scenarios = () => {
   const insets = useSafeAreaInsets()
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, refetch, isRefetching } = useQuery({
     queryKey: [SCENARIO.SCENARIO],
     queryFn: fetchScenarios,
   })
@@ -47,6 +47,8 @@ const Scenarios = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
         data={data}
+        onRefresh={refetch}
+        refreshing={isRefetching}
         renderItem={({ item }) => <EachScenario item={item} />}
       />
       <TouchableOpacity style={styles.fab} onPress={() => router.push('/(authenticated)/scenarios/add')}>

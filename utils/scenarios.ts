@@ -8,6 +8,17 @@ const getAddScenarioInputs = (): InputField[] => {
       type: 'text',
       required: true,
     },
+    {
+      id: 'access',
+      label: 'Access',
+      type: 'radio',
+      options: [
+        { id: 'Public', label: 'Public' },
+        { id: 'Private', label: 'Private' },
+      ],
+      defaultChecked: 'public',
+      style: { color: 'white', gap: 10 },
+    },
   ]
 }
 

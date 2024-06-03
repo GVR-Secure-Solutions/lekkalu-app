@@ -43,6 +43,7 @@ const AddScenarios = () => {
 
   const defaultFormValues = {
     name: isEdit ? editScenarioDetail?.name : undefined,
+    access: isEdit ? editScenarioDetail?.access : 'Public',
   }
 
   const {

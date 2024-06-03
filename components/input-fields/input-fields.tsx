@@ -1,10 +1,10 @@
 import { Control, Controller, ControllerRenderProps, FieldErrors, FieldValues } from 'react-hook-form'
-import { CheckIcon, FormControl, Input, Select, TextArea } from 'native-base'
+import { CheckIcon, FormControl, Input, Select, TextArea, Radio } from 'native-base'
 import { useCallback } from 'react'
 import { omit } from 'lodash'
 import MultiSelect from 'react-native-multiple-select'
 import { useColorScheme } from 'react-native'
-import { useTheme } from 'tamagui'
+import { useTheme, Text } from 'tamagui'
 import { InputField } from '@/types/input-fields'
 import DatePicker from '../date-picker'
 import { theme } from '@/app/_layout'
@@ -148,6 +148,25 @@ export default function InputFields({ inputs, control, errors }: InputFieldsProp
               color={inputColor}
               isInvalid={input.id in errors}
             />
+          )
+        }
+
+        case 'radio': {
+          return (
+            <Radio.Group
+              name={input.id}
+              value={field.value}
+              onChange={field.onChange}
+              defaultValue={input.defaultChecked}
+              className={input.className}
+              style={input.style}
+            >
+              {input.options.map((each) => (
+                <Radio key={each?.id} value={String(each?.id)}>
+                  <Text style={{ color: input?.style?.color || 'white' }}>{each?.label}</Text>
+                </Radio>
+              ))}
+            </Radio.Group>
           )
         }
 

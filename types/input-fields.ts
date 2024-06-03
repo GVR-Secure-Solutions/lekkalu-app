@@ -1,3 +1,5 @@
+import { StyleProp, ViewStyle } from 'react-native'
+
 type BaseInput = {
   id: string
   label: string
@@ -47,6 +49,8 @@ type TextInput = BaseInput & {
 type RadioInput = BaseInput & {
   type: 'radio'
   options: Option[]
+  defaultChecked?: string
+  style: StyleProp<ViewStyle>
 }
 
 type TextareaInput = BaseInput & {

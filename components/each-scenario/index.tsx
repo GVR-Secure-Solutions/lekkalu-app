@@ -23,7 +23,9 @@ export default function EachScenario({ item }: any) {
       toast.show({ title: 'Scenario deleted successfully' })
     },
     onError: () => {
-      toast.show({ title: 'Something went wrong!' })
+      queryClient.invalidateQueries({
+        queryKey: [SCENARIO.SCENARIO],
+      })
     },
   })
 
@@ -34,8 +36,18 @@ export default function EachScenario({ item }: any) {
     })
   }
 
+  const handleNavigateToScenario = (id: number) => {
+    router.push({
+      pathname: `/(authenticated)/scenarios/${id}`,
+      params: { id },
+    })
+  }
+
   return (
-    <TouchableOpacity onPress={() => {}} style={[styles.container, { backgroundColor: theme.background.get() }]}>
+    <TouchableOpacity
+      onPress={() => handleNavigateToScenario(item?.id)}
+      style={[styles.container, { backgroundColor: theme.background.get() }]}
+    >
       <View width={'$20'}>
         <Text>{item?.name}</Text>
       </View>

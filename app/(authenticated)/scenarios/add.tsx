@@ -5,6 +5,8 @@ import { View, Text, Button } from 'tamagui'
 import { router, useLocalSearchParams } from 'expo-router'
 import { useMutation } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
+import dayjs from 'dayjs'
+import { AxiosInstance } from 'axios'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { hp, wp } from '@/utils/responsive'
 import BackButton from '@/components/back-button'
@@ -17,17 +19,54 @@ import { createScenarios, editScenario as updateScenario } from '@/queries/scena
 import { Scenario } from '@/types/scenarios'
 import { queryClient } from '@/utils/query-client'
 import { SCENARIO } from '@/utils/query-keys/scenarios'
+import { loginImaginaryUser } from '@/queries/auth'
+import { addGoalForImaginaryUser as addGoal } from '@/queries/goal'
+import { useImaginaryAuth } from '@/hooks/use-imaginary-auth'
+
+const ONE_YEAR_LATER = dayjs().add(1, 'year').toISOString().split('T')[0]
 
 const AddScenarios = () => {
   const insets = useSafeAreaInsets()
   const params = useLocalSearchParams()
   const isEdit: boolean = !!params?.edit
 
+  const { getAPIClientForImaginaryUser } = useImaginaryAuth()
+
+  const { mutate: createGoalForImaginaryUser } = useMutation({
+    mutationFn: (apiClient: AxiosInstance) =>
+      addGoal(
+        {
+          name: `${Math.random()}-goal`,
+          goal_proportionality: 'HigherTheBetter',
+          track_kpi: 'NetWorth',
+          target_value: 1,
+          target_date: ONE_YEAR_LATER,
+        },
+        apiClient,
+      ),
+  })
+
+  const { mutate: login } = useMutation({
+    mutationFn: loginImaginaryUser,
+  })
+
   const { mutate: addScenario } = useMutation({
     mutationFn: createScenarios,
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: [SCENARIO.SCENARIO] })
-      router.push('/(authenticated)/scenarios/')
+      login(
+        { username: data.imag_username, password: data.imag_password, id: data.id },
+        {
+          onSuccess: (loginInfo) => {
+            const apiClient = getAPIClientForImaginaryUser(loginInfo.access, 'v2')
+            createGoalForImaginaryUser(apiClient, {
+              onSuccess: () => {
+                router.push(`/(authenticated)/scenarios/${data.id}`)
+              },
+            })
+          },
+        },
+      )
     },
   })
 

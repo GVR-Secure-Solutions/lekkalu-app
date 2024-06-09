@@ -32,8 +32,8 @@ export default function AppLayout() {
   }
 
   return (
-    <TamaguiProvider config={config}>
-      <NativeBaseProvider theme={theme}>
+    <NativeBaseProvider theme={theme}>
+      <TamaguiProvider config={config}>
         <PersistQueryClientProvider client={queryClient} persistOptions={{ persister: asyncStoragePersister }}>
           <AppContextProvider>
             <AuthProvider>
@@ -45,7 +45,7 @@ export default function AppLayout() {
             </AuthProvider>
           </AppContextProvider>
         </PersistQueryClientProvider>
-      </NativeBaseProvider>
-    </TamaguiProvider>
+      </TamaguiProvider>
+    </NativeBaseProvider>
   )
 }

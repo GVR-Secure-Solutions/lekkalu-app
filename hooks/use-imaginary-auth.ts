@@ -1,6 +1,6 @@
 import constate from 'constate'
 import axios from 'axios'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { loginImaginaryUser } from '@/queries/auth'
 import { AUTH } from '@/utils/query-keys'
@@ -12,14 +12,16 @@ export type ImaginaryUser = {
 export function useImaginaryAuth() {
   const qc = useQueryClient()
   const [imaginaryUsers, setImaginaryUsers] = useState<ImaginaryUser>({})
-  const { data: imag_users } = useQuery<ImaginaryUser>({ queryKey: [AUTH.IMAGINARY_CLIENT] })
+  // const { data: imag_users } = useQuery<ImaginaryUser>({ queryKey: [AUTH.IMAGINARY_CLIENT] })
 
   const loginImaginaryUserMutation = useMutation({
     mutationFn: loginImaginaryUser,
     onSuccess: (data) => {
       qc.setQueryData([AUTH.IMAGINARY_CLIENT], {
-        ...(imag_users as unknown as object),
-        [data?.username]: { access: data?.access, refresh: data?.refresh, id: data?.id },
+        access: data?.access,
+        refresh: data?.refresh,
+        id: data?.id,
+        username: data?.username,
       })
       qc.setQueryData([AUTH.CURRENT_IMAGINARY_USER], data.username)
     },

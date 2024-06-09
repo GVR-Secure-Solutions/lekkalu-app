@@ -9,7 +9,7 @@ import { hp, wp } from '@/utils/responsive'
 import { THEME_COLORS } from '@/utils/theme'
 import BackButton from '@/components/back-button'
 import { FontSizes } from '@/utils/fonts'
-import EachScenario from '@/components/each-scenario'
+import EachScenario from '@/components/scenarios/each-scenario'
 import { SCENARIO } from '@/utils/query-keys/scenarios'
 import { fetchScenarios } from '@/queries/scenario'
 

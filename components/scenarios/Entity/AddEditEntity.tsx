@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react'
 import { Button, Text, View } from 'tamagui'
 import { Modal } from 'native-base'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useNavigation } from 'expo-router'
 import { UseFormReturn } from 'react-hook-form'
+import { useColorScheme } from 'react-native'
 import { hp, wp } from '@/utils/responsive'
 import { FontSizes } from '@/utils/fonts'
 import KeyboardScrollView from '../../keyboard-scroll-view'
@@ -29,8 +29,11 @@ const AddEditEntityForScenario = ({
   isLoading,
   handleComplete,
 }: EntityForScenarioType) => {
-  const insets = useSafeAreaInsets()
   const navigation = useNavigation()
+
+  const systemTheme = useColorScheme()
+  const background = systemTheme === 'dark' ? 'black' : 'white'
+  const textColor = systemTheme === 'dark' ? 'white' : 'black'
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('blur', () => {
@@ -43,17 +46,12 @@ const AddEditEntityForScenario = ({
 
   return (
     <Modal avoidKeyboard isOpen={true} onClose={handleComplete} size={'full'}>
-      <Modal.Content>
+      <Modal.Content style={{ backgroundColor: background }}>
         <Modal.CloseButton />
         <Modal.Body>
-          <View
-            f={1}
-            pt={insets.top + hp(2)}
-            bg="$backgroundHover"
-            style={{ paddingHorizontal: wp(5), marginTop: hp(3) }}
-          >
-            <View fd="row" ai="center" columnGap={wp(4)} mx={wp(5)}>
-              <Text fontSize={FontSizes.size20} fontFamily={'$heading'}>
+          <View f={1} style={{ paddingHorizontal: wp(10), marginTop: hp(3) }}>
+            <View fd="row" ai="center" columnGap={wp(4)} mb={wp(5)}>
+              <Text fontSize={FontSizes.size20} fontFamily={'$heading'} color={textColor}>
                 {entityName}
               </Text>
             </View>

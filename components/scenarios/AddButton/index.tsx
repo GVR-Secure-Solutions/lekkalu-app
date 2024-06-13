@@ -21,13 +21,13 @@ const AddButtonForScenario = ({ handlePress }: AddButtonForScenarioType) => {
   return (
     <View>
       <TouchableOpacity style={styles.fab} onPress={() => setIsDialogOpen(true)}>
-        <Plus />
+        <Plus color={'white'} />
       </TouchableOpacity>
       <Dialog open={isDialogOpen} onOpenChange={(value) => setIsDialogOpen(value)}>
         <Dialog.Portal key={'Expense-dialog-portal'}>
           <Dialog.Overlay key={'overlay'} onPress={() => setIsDialogOpen(false)} />
           <Dialog.Content style={{ width: '100%', marginTop: 'auto' }} key={'Expense-dialog-content'}>
-            <Dialog.Title>
+            <Dialog.Title ml="auto">
               <Dialog.Close asChild>
                 <View>
                   <Button size="$2" circular icon={X} onPress={() => setIsDialogOpen(false)} />

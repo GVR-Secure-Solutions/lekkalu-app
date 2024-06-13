@@ -163,7 +163,7 @@ export default function InputFields({ inputs, control, errors }: InputFieldsProp
             >
               {input.options.map((each) => (
                 <Radio key={each?.id} value={String(each?.id)}>
-                  <Text style={{ color: input?.style?.color || 'white' }}>{each?.label}</Text>
+                  <Text style={{ color: input?.style?.color || inputColor }}>{each?.label}</Text>
                 </Radio>
               ))}
             </Radio.Group>

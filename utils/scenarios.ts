@@ -17,7 +17,7 @@ const getAddScenarioInputs = (): InputField[] => {
         { id: 'Private', label: 'Private' },
       ],
       defaultChecked: 'public',
-      style: { color: 'white', gap: 10 },
+      style: { gap: 10 },
     },
   ]
 }

@@ -23,25 +23,25 @@ const AddButtonForScenario = ({ handlePress }: AddButtonForScenarioType) => {
       <TouchableOpacity style={styles.fab} onPress={() => setIsDialogOpen(true)}>
         <Plus />
       </TouchableOpacity>
-      <Dialog open={isDialogOpen} modal>
-        <Dialog.Portal>
-          <Dialog.Overlay key={'overlay'} />
-          <Dialog.Content>
+      <Dialog open={isDialogOpen} onOpenChange={(value) => setIsDialogOpen(value)}>
+        <Dialog.Portal key={'Expense-dialog-portal'}>
+          <Dialog.Overlay key={'overlay'} onPress={() => setIsDialogOpen(false)} />
+          <Dialog.Content style={{ width: '100%', marginTop: 'auto' }} key={'Expense-dialog-content'}>
             <Dialog.Title>
               <Dialog.Close asChild>
-                <View flexDirection="row" justifyContent="flex-end">
+                <View>
                   <Button size="$2" circular icon={X} onPress={() => setIsDialogOpen(false)} />
                 </View>
               </Dialog.Close>
             </Dialog.Title>
-            <View h={'20%'}>
-              <TouchableOpacity onPress={() => onPress('Asset')}>
+            <View h={'25%'}>
+              <TouchableOpacity onPress={() => onPress('Asset')} style={styles.entityButton}>
                 <Text>Asset</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => onPress('Liabilities')}>
+              <TouchableOpacity onPress={() => onPress('Liabilities')} style={styles.entityButton}>
                 <Text>Liabilities</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => onPress('Expense')}>
+              <TouchableOpacity onPress={() => onPress('Expense')} style={styles.entityButton}>
                 <Text>Monthly Expenses</Text>
               </TouchableOpacity>
             </View>
@@ -64,6 +64,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: wp(8),
   },
+  entityButton: { padding: 20 },
 })
 
 export default AddButtonForScenario

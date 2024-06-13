@@ -34,10 +34,6 @@ const useScenario = () => {
   const getAllIncomeExpensesQuery = useQuery({
     queryKey: [`${INCOME_STATEMENT_QUERY_KEYS.INCOME_EXPENSE}-${IMAGINARY_USER?.username}`],
     queryFn: fetchIncomeExpenses,
-    select: (data) => {
-      // console.log('expense', data)
-      return data
-    },
   })
 
   async function deleteIncomeExpense(id: number) {
@@ -77,7 +73,7 @@ const useScenario = () => {
       const asset = data?.asset?.map((each) => ({
         entity_type: 'Asset',
         name: each?.name,
-        amount: each?.market_value,
+        amount: each?.purchase_value,
         id: each?.id,
       }))
 
@@ -121,6 +117,10 @@ const useScenario = () => {
     return data
   }
 
+  const addPhysicalAssetMutation = useMutation({
+    mutationFn: addPhysicalAsset,
+  })
+
   async function editPhysicalAsset(id: number, dto: Partial<AddPhysicalAssetSchemaForScenario>) {
     const { data } = await apiClient.put(`physical_assets/${id}`, dto)
     return data
@@ -134,6 +134,7 @@ const useScenario = () => {
     getAllLiabilities,
     getAllScenarioEntitiesQuery,
     IMAGINARY_USER,
+    addPhysicalAssetMutation,
   }
 }
 

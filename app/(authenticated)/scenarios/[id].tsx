@@ -11,12 +11,14 @@ import { hp, wp } from '@/utils/responsive'
 import BackButton from '@/components/back-button'
 import { FontSizes } from '@/utils/fonts'
 import { useImaginaryAuth } from '@/hooks/use-imaginary-auth'
-import ExpensesForScenario from '@/components/scenarios/Expenses/index'
 import AddButtonForScenario from '@/components/scenarios/AddButton'
+import ExpensesForScenario from '@/components/scenarios/Expenses/index'
 import { INCOME_STATEMENT_QUERY_KEYS } from '@/utils/query-keys/income-statement'
 import { AUTH, BALANCE_SHEET } from '@/utils/query-keys'
 import ListEntity from '@/components/scenarios/Entity/ListEntity'
 import useScenario from '@/hooks/use-scenario'
+import AssetForScenario from '@/components/scenarios/Asset'
+import LiabilitiesForScenario from '@/components/scenarios/Liabilities'
 
 export type ScenarioEntities = 'Asset' | 'Liabilities' | 'Expense'
 
@@ -77,13 +79,13 @@ export default function ScenarioWithId() {
   const EntityDialog = () => {
     switch (entity) {
       case 'Asset': {
-        return <></>
+        return <AssetForScenario handleComplete={handleComplete} />
       }
       case 'Expense': {
         return <ExpensesForScenario handleComplete={handleComplete} />
       }
       case 'Liabilities': {
-        return <></>
+        return <LiabilitiesForScenario handleComplete={handleComplete} />
       }
       default: {
         return <></>

@@ -42,8 +42,9 @@ expo-env.d.ts
 
 # env files
 *.env
-expo-env.d.ts
 
 android
 firebase
 ios
+
+.idea

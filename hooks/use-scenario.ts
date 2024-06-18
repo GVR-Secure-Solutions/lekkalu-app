@@ -42,6 +42,8 @@ const useScenario = () => {
     return data
   }
 
+  const deleteIncomeExpenseMutation = useMutation({ mutationFn: deleteIncomeExpense })
+
   async function fetchLiabilities() {
     const { data } = await apiClient.get<Liability[]>('loans/')
     return data
@@ -107,6 +109,8 @@ const useScenario = () => {
     return data
   }
 
+  const deleteLiabilityMutation = useMutation({ mutationFn: deleteLiability })
+
   async function fetchPhysicalAssets() {
     const { data } = await apiClient.get<PhysicalAsset[]>('physical_assets/')
     return data
@@ -116,6 +120,8 @@ const useScenario = () => {
     const { data } = await apiClient.delete<{ message: string }>(`/physical_assets/${id}`)
     return data
   }
+
+  const deletePhysicalAssetMutation = useMutation({ mutationFn: deletePhysicalAsset })
 
   async function addPhysicalAsset(dto: AddPhysicalAssetSchemaForScenario) {
     const { data } = await apiClient.post<PhysicalAsset[]>('/physical_assets/', dto)
@@ -141,6 +147,9 @@ const useScenario = () => {
     IMAGINARY_USER,
     addPhysicalAssetMutation,
     addLiabilityMutation,
+    deleteLiabilityMutation,
+    deleteIncomeExpenseMutation,
+    deletePhysicalAssetMutation,
   }
 }
 

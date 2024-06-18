@@ -24,3 +24,14 @@ export const signupSchema = z.object({
   privacyPolicy: z.boolean({ required_error: 'Please agree to the privacy policies!' }),
 })
 export type SignupSchema = z.infer<typeof signupSchema>
+
+export const loginWithGoogleSchema = z.object({
+  code: z.string(),
+})
+
+export type LoginWithGoogleSchema = z.infer<typeof loginWithGoogleSchema>
+
+export type LoginResponseType = {
+  access: string
+  refresh: string
+}

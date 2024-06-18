@@ -24,6 +24,8 @@ import {
   useUpdateIncomeExpense,
   useUpdateIncomeSource,
 } from '@/queries/income-statement'
+import { queryClient } from '@/utils/query-client'
+import { INCOME_STATEMENT_QUERY_KEYS } from '@/utils/query-keys/income-statement'
 
 interface ScreenParams {
   type: 'income' | 'expense'
@@ -91,8 +93,10 @@ const AddEditIncomeExpense = () => {
         }
         if (isIncome) {
           await updateIncomeSourceMutation({ payload, id: editItem.id })
+          queryClient.invalidateQueries({ queryKey: [INCOME_STATEMENT_QUERY_KEYS.INCOME_SOURCE] })
         } else {
           await updateIncomeExpenseMutation({ payload, id: editItem.id })
+          queryClient.invalidateQueries({ queryKey: [INCOME_STATEMENT_QUERY_KEYS.INCOME_EXPENSE] })
         }
         router.push('/(authenticated)/income-statement')
         toast.show({ title: (isIncome ? 'Income' : 'Expense') + ' updated successfully' })
@@ -110,9 +114,12 @@ const AddEditIncomeExpense = () => {
       }
       if (isIncome) {
         await addIncomeSourceMutation(payload)
+        queryClient.invalidateQueries({ queryKey: [INCOME_STATEMENT_QUERY_KEYS.INCOME_SOURCE] })
       } else {
         await addIncomeExpenseMutation(payload)
+        queryClient.invalidateQueries({ queryKey: [INCOME_STATEMENT_QUERY_KEYS.INCOME_EXPENSE] })
       }
+      queryClient.invalidateQueries({ queryKey: [INCOME_STATEMENT_QUERY_KEYS.INCOME_SOURCE] })
       router.push('/(authenticated)/income-statement')
       toast.show({ title: (isIncome ? 'Income' : 'Expense') + ' added successfully' })
     } catch (error) {

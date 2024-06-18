@@ -7,11 +7,11 @@ module.exports = ({ config }: ConfigContext): ExpoConfig => {
     slug: config.slug || '',
     android: {
       ...config.android,
-      googleServicesFile: process.env.GOOGLE_SERVICES_JSON,
+      googleServicesFile: process.env.EXPO_PUBLIC_GOOGLE_SERVICES_JSON,
     },
     ios: {
       ...config.ios,
-      googleServicesFile: process.env.GOOGLE_SERVICES_PLIST,
+      googleServicesFile: process.env.EXPO_PUBLIC_GOOGLE_SERVICES_PLIST,
     },
   }
 }

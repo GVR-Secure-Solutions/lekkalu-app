@@ -1,17 +1,26 @@
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Link, Redirect, router } from 'expo-router'
+import { Link, Redirect } from 'expo-router'
 import { Button, Checkbox, Input, Label, Stack, Text, XStack, YStack, useTheme } from 'tamagui'
-import { TouchableOpacity } from 'react-native'
 import { Check as CheckIcon } from '@tamagui/lucide-icons'
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin'
 import { LoginSchema, loginSchema } from '../schema/auth'
 import { useAuthContext } from '@/hooks/use-auth'
 import FormControl from '@/components/form-control'
 import { FontSizes } from '@/utils/fonts'
 import { hp, wp } from '@/utils/responsive'
+import GoogleSigninButton from '@/components/google-sign-in-button'
+
+GoogleSignin.configure({
+  iosClientId: process.env.EXPO_PUBLIC_API_IOS_CLIENT_ID,
+  scopes: ['profile', 'email'],
+  webClientId: process.env.EXPO_PUBLIC_API_WEB_CLIENT_ID,
+  offlineAccess: true,
+  forceCodeForRefreshToken: true,
+})
 
 export default function Login() {
-  const { isAuthenticated, loginMutation } = useAuthContext()
+  const { isAuthenticated, loginMutation, loginWithGoogleMutation } = useAuthContext()
   const theme = useTheme()
 
   const {
@@ -29,12 +38,24 @@ export default function Login() {
     loginMutation.mutate(values)
   }
 
-  const handleForgotPassword = () => {
-    router.push('/reset-password?isForgotPassword=true')
-  }
+  // const handleForgotPassword = () => {
+  //   router.push('/reset-password?isForgotPassword=true')
+  // }
 
   if (isAuthenticated) {
     return <Redirect href="/dashboard" />
+  }
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices()
+      const data = await GoogleSignin.signIn()
+      loginWithGoogleMutation.mutate({ code: data.serverAuthCode || '' })
+    } catch (error: any) {
+      if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        console.log('google services is not available')
+      }
+    }
   }
 
   return (
@@ -140,7 +161,7 @@ export default function Login() {
         >
           Login
         </Button>
-
+        {/* <GoogleSigninButton handleLogin={handleGoogleSignIn} /> */}        
         <Link href="/signup" asChild>
           <Button variant="outlined">
             <Text color="$color" fontSize={FontSizes.size15} ta="center">

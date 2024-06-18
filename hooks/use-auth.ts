@@ -4,10 +4,11 @@ import { useToast } from 'native-base'
 import { useCallback, useEffect, useState } from 'react'
 import { router } from 'expo-router'
 import constate from 'constate'
-import { deleteAccount, fetchUser, login, refreshToken, signup } from '@/queries/auth'
+import { deleteAccount, fetchUser, login, loginWithGoogle as googleLogin, refreshToken, signup } from '@/queries/auth'
 import { AUTH } from '@/utils/query-keys'
 import { setToken } from '@/utils/token'
 import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/utils/constants'
+import { LoginResponseType } from '@/schema/auth'
 
 export function useAuth() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -41,27 +42,38 @@ export function useAuth() {
     [refreshTokenStatus, fetchUserData, tokenData?.refresh, tokenData?.access],
   )
 
+  const handleLoginSuccess = (data: LoginResponseType) => {
+    toast.show({ title: 'Successfully logged in!' })
+
+    /** Saving the tokens */
+    setToken('refresh', data.refresh)
+    setToken('access', data.access)
+
+    /** updating the data in queryClient */
+    qc.setQueryData([AUTH.LOGGED_IN], data)
+
+    fetchUserData()
+  }
+
+  const handleLoginError = () => {
+    toast.show({
+      title: 'Invalid Credentials!',
+      description: 'You have entered the wrong credentials!',
+    })
+  }
+
   const loginMutation = useMutation({
     mutationKey: [AUTH.LOGIN],
     mutationFn: login,
-    onSuccess: (data) => {
-      toast.show({ title: 'Successfully logged in!' })
+    onSuccess: (data) => handleLoginSuccess(data),
+    onError: handleLoginError,
+  })
 
-      /** Saving the tokens */
-      setToken('refresh', data.refresh)
-      setToken('access', data.access)
-
-      /** updating the data in queryClient */
-      qc.setQueryData([AUTH.LOGGED_IN], data)
-
-      fetchUserData()
-    },
-    onError: () => {
-      toast.show({
-        title: 'Invalid Credentials!',
-        description: 'You have entered the wrong credentials!',
-      })
-    },
+  const loginWithGoogleMutation = useMutation({
+    mutationKey: [AUTH.LOGIN_WITH_GOOGLE],
+    mutationFn: googleLogin,
+    onSuccess: (data) => handleLoginSuccess(data),
+    onError: handleLoginError,
   })
 
   const signupMutation = useMutation({
@@ -116,6 +128,7 @@ export function useAuth() {
     signupMutation,
     userData,
     deleteAccountMutation,
+    loginWithGoogleMutation,
   }
 }
 

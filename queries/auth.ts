@@ -1,14 +1,14 @@
 import { AxiosHeaders } from 'axios'
 import { useQuery } from '@tanstack/react-query'
 import { getToken } from '@/utils/token'
-import { tokenClient, userClient } from '@/utils/client'
+import { socialLoginClient, tokenClient, userClient } from '@/utils/client'
 import { User } from '@/types/user'
-import { LoginSchema, SignupSchema } from '@/schema/auth'
+import { LoginResponseType, LoginSchema, LoginWithGoogleSchema, SignupSchema } from '@/schema/auth'
 import { AUTH } from '@/utils/query-keys'
 
 export async function refreshToken() {
   const _refreshToken = await getToken('refresh')
-  const { data } = await tokenClient.post<{ access: string; refresh: string }>('/refresh/', {
+  const { data } = await tokenClient.post<LoginResponseType>('/refresh/', {
     refresh: _refreshToken,
   })
   return data
@@ -26,7 +26,12 @@ export async function fetchUser() {
 }
 
 export async function login(dto: Omit<LoginSchema, 'rememberMe'>) {
-  const { data } = await tokenClient.post<{ access: string; refresh: string }>('/', dto)
+  const { data } = await tokenClient.post<LoginResponseType>('/', dto)
+  return data
+}
+
+export async function loginWithGoogle(dto: LoginWithGoogleSchema) {
+  const { data } = await socialLoginClient.post<LoginResponseType>('dj-rest-auth/google/login/', dto)
   return data
 }
 

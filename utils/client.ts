@@ -6,7 +6,7 @@ const BASIC_HEADER = {
   'Content-Type': 'application/json',
 }
 
-export const BASE_URL = 'https://api.finuncle.com'
+export const BASE_URL = 'https://api1.finuncle.com'
 
 /**
  * This is general api client which will be used for most of the stuff
@@ -44,6 +44,20 @@ apiv2Client.interceptors.request.use(async (config) => {
  */
 export const userClient = axios.create({
   baseURL: process.env.EXPO_PUBLIC_USER_BASE_URL,
+  headers: BASIC_HEADER,
+})
+
+userClient.interceptors.request.use(async (config) => {
+  config.headers = new AxiosHeaders(config.headers)
+  const accessToken = await getToken('access')
+  if (accessToken) {
+    config.headers.setAuthorization(`Bearer ${accessToken}`)
+  }
+  return config
+})
+
+export const socialLoginClient = axios.create({
+  baseURL: process.env.EXPO_PUBLIC_USER_BASE_URL_WO_API_KEYWORD,
   headers: BASIC_HEADER,
 })
 

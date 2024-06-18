@@ -70,8 +70,7 @@ const useResetPassword = (resetForm: Function) => {
 }
 
 const editProfile = (payload: EditProfilePayloadType) => {
-  const headers = getAxiosHeaderWithToken()
-  return userClient.put('/users/detail', payload, { headers })
+  return userClient.put('/users/detail', payload)
 }
 
 const useEditProfile = () => {

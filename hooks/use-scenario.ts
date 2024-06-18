@@ -7,6 +7,7 @@ import { IAddEditIncomeExpenseSchema } from '@/schema/income-statement'
 import { AddLiabilitySchema, AddPhysicalAssetSchemaForScenario } from '@/schema/balance-sheet'
 import { Liability, PhysicalAsset } from '@/types/balance-sheet'
 import { INCOME_STATEMENT_QUERY_KEYS } from '@/utils/query-keys/income-statement'
+import { SCENARIO } from '@/utils/query-keys/scenarios'
 
 const useScenario = () => {
   const { getAPIClientForImaginaryUser } = useImaginaryAuth()
@@ -55,7 +56,7 @@ const useScenario = () => {
   }
 
   const getAllScenarioEntitiesQuery = useQuery({
-    queryKey: [`SCENARIO-ENTITIES-${IMAGINARY_USER?.username}`],
+    queryKey: [`${SCENARIO.SCENARIO_ENTITIES}-${IMAGINARY_USER?.username}`],
     queryFn: fetchScenarioEntities,
     select: (data) => {
       const income = data?.income?.map((each) => ({
@@ -91,6 +92,10 @@ const useScenario = () => {
     const { data } = await apiClient.post('loans/', dto)
     return data
   }
+
+  const addLiabilityMutation = useMutation({
+    mutationFn: addLiability,
+  })
 
   async function editLiability(id: number, dto: Partial<AddLiabilitySchema>) {
     const { data } = await apiClient.put(`loans/${id}`, dto)
@@ -135,6 +140,7 @@ const useScenario = () => {
     getAllScenarioEntitiesQuery,
     IMAGINARY_USER,
     addPhysicalAssetMutation,
+    addLiabilityMutation,
   }
 }
 

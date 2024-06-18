@@ -20,14 +20,14 @@ export type AddPhysicalAssetSchema = z.infer<typeof addPhysicalAssetSchema>
 
 export const addLiabilitySchema = z.object({
   name: z.string({ required_error: 'Name is required!' }),
-  balance: z.coerce.number({ required_error: 'Balance is required!' }),
+  balance: z.coerce.string({ required_error: 'Balance is required!' }),
   principal: z.coerce.number({ required_error: 'Principal is required!' }),
   disbursement_date: z.date({ required_error: 'Disbursement Date is required!' }),
-  emi_day: z.coerce.number({ required_error: 'Emi day is required!' }).min(1).max(30),
-  emi: z.coerce.number().optional(),
+  emi_day: z.coerce.string({ required_error: 'Emi day is required!' }).min(1).max(30),
+  emi: z.coerce.string().optional(),
   tenure: z.coerce.number({ required_error: 'Tenure is required!' }),
   interest_rate: z.coerce.number({ required_error: 'Interest Rage is required!' }),
-  closure_charges: z.coerce.number({ required_error: 'Closure Charges is required!' }),
+  closure_charges: z.coerce.string({ required_error: 'Closure Charges is required!' }),
 })
 export type AddLiabilitySchema = Omit<z.infer<typeof addLiabilitySchema>, 'disbursement_date'> & {
   disbursement_date: string
@@ -44,9 +44,6 @@ export const addPhysicalAssetSchemaForScenario = z.object({
   market_value: z.coerce.number().optional(),
   type: z.coerce.number(),
   tags: z.array(z.string()),
-  // months: z.coerce.number(),
-  // years: z.coerce.number(),
-  user: z.number(),
 })
 
 export type AddPhysicalAssetSchemaForScenario = Omit<

@@ -7,9 +7,10 @@ import useScenario from '@/hooks/use-scenario'
 import { AddPhysicalAssetSchemaForScenario, addPhysicalAssetSchemaForScenario } from '@/schema/balance-sheet'
 import AddEditEntityForScenario from '../Entity/AddEditEntity'
 import { ASSET_INPUTS_FOR_SCENARIO } from '@/components/create-or-edit-asset/config'
-import { AUTH, BALANCE_SHEET } from '@/utils/query-keys'
+import { AUTH } from '@/utils/query-keys'
 import { SERVER_DATE_FORMAT } from '@/utils/constants'
 import { ImaginaryUserType } from '@/app/(authenticated)/scenarios/[id]'
+import { SCENARIO } from '@/utils/query-keys/scenarios'
 
 type TAssetForScenario = {
   handleComplete: () => void
@@ -17,12 +18,16 @@ type TAssetForScenario = {
 
 const AssetForScenario = ({ handleComplete }: TAssetForScenario) => {
   const qc = useQueryClient()
-  const imaginaryUser = qc.getQueryData<ImaginaryUserType>([AUTH.CURRENT_IMAGINARY_USER])
+  const IMAGINARY_USER = qc.getQueryData<ImaginaryUserType>([AUTH.CURRENT_IMAGINARY_USER])
   const form = useForm<AddPhysicalAssetSchemaForScenario>({
     resolver: zodResolver(addPhysicalAssetSchemaForScenario),
+    defaultValues: {
+      tags: [],
+      type: 1,
+    },
   })
 
-  const { addPhysicalAssetMutation } = useScenario()
+  const { addPhysicalAssetMutation, getAllScenarioEntitiesQuery } = useScenario()
 
   const handleAdd = () => {
     try {
@@ -48,8 +53,9 @@ const AssetForScenario = ({ handleComplete }: TAssetForScenario) => {
     if (addPhysicalAssetMutation?.isSuccess) {
       handleComplete()
       qc.invalidateQueries({
-        queryKey: [`${BALANCE_SHEET.ASSETS}-${imaginaryUser?.username}`],
+        queryKey: [`${SCENARIO.SCENARIO_ENTITIES}-${IMAGINARY_USER?.username}`],
       })
+      getAllScenarioEntitiesQuery.refetch()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addPhysicalAssetMutation?.isSuccess])

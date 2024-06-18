@@ -6,9 +6,9 @@ import { IAddEditIncomeExpenseSchema, addEditIncomeExpenseSchema } from '@/schem
 import { getAddIncomeExpenseInputs } from '@/utils/income-statement'
 import AddEditEntityForScenario from '../Entity/AddEditEntity'
 import useScenario from '@/hooks/use-scenario'
-import { INCOME_STATEMENT_QUERY_KEYS } from '@/utils/query-keys/income-statement'
 import { AUTH } from '@/utils/query-keys'
 import { ImaginaryUserType } from '@/app/(authenticated)/scenarios/[id]'
+import { SCENARIO } from '@/utils/query-keys/scenarios'
 
 const EXPENSES_TYPE = [
   { id: 1, label: 'Personal' },
@@ -18,15 +18,15 @@ const EXPENSES_TYPE = [
 
 const ExpensesForScenario = ({ handleComplete }: any) => {
   const qc = useQueryClient()
-  const imaginaryUser = qc.getQueryData<ImaginaryUserType>([AUTH.CURRENT_IMAGINARY_USER])
+  const IMAGINARY_USER = qc.getQueryData<ImaginaryUserType>([AUTH.CURRENT_IMAGINARY_USER])
 
   const form = useForm<IAddEditIncomeExpenseSchema>({
     resolver: zodResolver(addEditIncomeExpenseSchema),
   })
 
-  const inputs = useMemo(() => getAddIncomeExpenseInputs(EXPENSES_TYPE), [])
+  const { addIncomeMutation, getAllScenarioEntitiesQuery } = useScenario()
 
-  const { addIncomeMutation } = useScenario()
+  const inputs = useMemo(() => getAddIncomeExpenseInputs(EXPENSES_TYPE), [])
 
   const handleAdd = () => {
     try {
@@ -40,8 +40,9 @@ const ExpensesForScenario = ({ handleComplete }: any) => {
     if (addIncomeMutation.isSuccess) {
       handleComplete()
       qc.invalidateQueries({
-        queryKey: [`${INCOME_STATEMENT_QUERY_KEYS.INCOME_EXPENSE}-${imaginaryUser?.username}`],
+        queryKey: [`${SCENARIO.SCENARIO_ENTITIES}-${IMAGINARY_USER?.username}`],
       })
+      getAllScenarioEntitiesQuery.refetch()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addIncomeMutation?.isSuccess])

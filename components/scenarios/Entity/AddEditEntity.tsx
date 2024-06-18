@@ -66,7 +66,7 @@ const AddEditEntityForScenario = ({
                 bg="$primary"
                 color="white"
                 mt={hp(4)}
-                disabled={isLoading || form.formState.isDirty}
+                disabled={isLoading || !form.formState.isDirty}
               >
                 {isEdit ? `Edit ${entityName}` : `Add ${entityName}`}
               </Button>

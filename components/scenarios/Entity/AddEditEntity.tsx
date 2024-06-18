@@ -9,11 +9,12 @@ import { FontSizes } from '@/utils/fonts'
 import KeyboardScrollView from '../../keyboard-scroll-view'
 import InputFields from '../../input-fields'
 import { InputField } from '@/types/input-fields'
+import { ScenarioEntities } from '@/app/(authenticated)/scenarios/[id]'
 
 type EntityForScenarioType = {
   isEdit?: boolean
   inputs: InputField[]
-  entityName: string
+  entityName: ScenarioEntities
   form: UseFormReturn<any>
   mutation: any
   isLoading: boolean

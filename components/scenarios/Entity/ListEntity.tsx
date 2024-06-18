@@ -10,26 +10,36 @@ type ListEntityType = {
   data: any
   isLoading: boolean
   refetch: any
+  handleEdit: React.Dispatch<
+    React.SetStateAction<
+      | {
+          type: ScenarioEntities
+          id: number
+        }
+      | undefined
+    >
+  >
 }
 
-const ListEntity = ({ data, isLoading, refetch }: ListEntityType) => {
+const getTextColor = (type: ScenarioEntities) => {
+  switch (type) {
+    case 'Asset':
+      return '$green10'
+    case 'Liabilities':
+      return '$red10'
+    case 'Expense':
+      return '$blue10'
+  }
+}
+
+const ListEntity = ({ data, isLoading, refetch, handleEdit }: ListEntityType) => {
   const theme = useTheme()
   const { deleteLiabilityMutation, deleteIncomeExpenseMutation, deletePhysicalAssetMutation } = useScenario()
   const { mutate: deleteExpense, isSuccess: deletedExpense } = deleteIncomeExpenseMutation
   const { mutate: deleteLiabilities, isSuccess: deletedLiabilities } = deleteLiabilityMutation
   const { mutate: deleteAsset, isSuccess: deletedAsset } = deletePhysicalAssetMutation
-  const getTextColor = (type: ScenarioEntities) => {
-    switch (type) {
-      case 'Asset':
-        return '$green10'
-      case 'Liabilities':
-        return '$red10'
-      case 'Expense':
-        return '$blue10'
-    }
-  }
 
-  const handleDelete = (entity_type: string, id: number) => {
+  const handleDelete = (entity_type: ScenarioEntities, id: number) => {
     switch (entity_type) {
       case 'Expense':
         deleteExpense(id)
@@ -95,7 +105,10 @@ const ListEntity = ({ data, isLoading, refetch }: ListEntityType) => {
               <Text pt={8}>Rs. {item?.amount}</Text>
             </View>
             <View alignSelf="center">
-              <EditDeleteMenu onDelete={() => handleDelete(item?.entity_type, item?.id)} />
+              <EditDeleteMenu
+                onDelete={() => handleDelete(item?.entity_type, item?.id)}
+                onEdit={() => handleEdit({ id: item.id, type: item?.entity_type })}
+              />
             </View>
           </View>
         )

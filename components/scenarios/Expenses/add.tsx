@@ -10,7 +10,7 @@ import { AUTH } from '@/utils/query-keys'
 import { ImaginaryUserType } from '@/app/(authenticated)/scenarios/[id]'
 import { SCENARIO } from '@/utils/query-keys/scenarios'
 
-const EXPENSES_TYPE = [
+export const EXPENSES_TYPE = [
   { id: 1, label: 'Personal' },
   { id: 2, label: 'Investment' },
   { id: 3, label: 'Loan_repayment' },
@@ -49,7 +49,7 @@ const ExpensesForScenario = ({ handleComplete }: any) => {
 
   return (
     <AddEditEntityForScenario
-      entityName="Expenses"
+      entityName="Expense"
       form={form}
       inputs={inputs}
       mutation={handleAdd}

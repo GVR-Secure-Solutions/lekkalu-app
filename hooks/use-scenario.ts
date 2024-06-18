@@ -32,6 +32,11 @@ const useScenario = () => {
     return data
   }
 
+  async function fetchIncomeExpensesById(id: number) {
+    const { data } = await apiClient.get(`income_expense/${id}`)
+    return data
+  }
+
   const getAllIncomeExpensesQuery = useQuery({
     queryKey: [`${INCOME_STATEMENT_QUERY_KEYS.INCOME_EXPENSE}-${IMAGINARY_USER?.username}`],
     queryFn: fetchIncomeExpenses,
@@ -150,6 +155,7 @@ const useScenario = () => {
     deleteLiabilityMutation,
     deleteIncomeExpenseMutation,
     deletePhysicalAssetMutation,
+    fetchIncomeExpensesById,
   }
 }
 

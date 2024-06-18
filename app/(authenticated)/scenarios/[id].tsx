@@ -12,13 +12,14 @@ import BackButton from '@/components/back-button'
 import { FontSizes } from '@/utils/fonts'
 import { useImaginaryAuth } from '@/hooks/use-imaginary-auth'
 import AddButtonForScenario from '@/components/scenarios/AddButton'
-import ExpensesForScenario from '@/components/scenarios/Expenses/index'
+import ExpensesForScenario from '@/components/scenarios/Expenses/add'
 import { INCOME_STATEMENT_QUERY_KEYS } from '@/utils/query-keys/income-statement'
 import { AUTH, BALANCE_SHEET } from '@/utils/query-keys'
 import ListEntity from '@/components/scenarios/Entity/ListEntity'
 import useScenario from '@/hooks/use-scenario'
 import AssetForScenario from '@/components/scenarios/Asset'
 import LiabilitiesForScenario from '@/components/scenarios/Liabilities'
+import EditExpenseForScenario from '@/components/scenarios/Expenses/edit'
 
 export type ScenarioEntities = 'Asset' | 'Liabilities' | 'Expense'
 
@@ -30,7 +31,8 @@ export type ImaginaryUserType = {
 }
 
 export default function ScenarioWithId() {
-  const [entity, setEntity] = useState<ScenarioEntities>()
+  const [entityToAdd, setEntityToAdd] = useState<ScenarioEntities>()
+  const [entityToEdit, setEntityToEdit] = useState<{ type: ScenarioEntities; id: number }>()
   const params = useLocalSearchParams()
   const insets = useSafeAreaInsets()
   const scenarioId = +params.id
@@ -51,7 +53,7 @@ export default function ScenarioWithId() {
         queryKey: [
           `${INCOME_STATEMENT_QUERY_KEYS.INCOME_EXPENSE}-${IMAGINARY_USER?.username}`,
           `${BALANCE_SHEET.LIABILITIES}-${IMAGINARY_USER?.username}`,
-          `SCENARIO-ENTITIES-${IMAGINARY_USER?.username}`,
+          `${SCENARIO.SCENARIO_ENTITIES}-${IMAGINARY_USER?.username}`,
           `${AUTH.CURRENT_IMAGINARY_USER}`,
           `${AUTH.IMAGINARY_CLIENT}`,
         ],
@@ -67,29 +69,46 @@ export default function ScenarioWithId() {
   }, [isSuccess])
 
   const handleAddPress = (entity: ScenarioEntities) => {
-    setEntity(entity)
+    setEntityToAdd(entity)
   }
 
-  const handleComplete = () => {
-    setEntity(undefined)
+  const handleAddComplete = () => {
+    setEntityToAdd(undefined)
+  }
+
+  const handleEditComplete = () => {
+    setEntityToEdit(undefined)
   }
 
   const { getAllScenarioEntitiesQuery } = useScenario()
 
-  const EntityDialog = () => {
-    switch (entity) {
+  const EntityDialogToAddEntity = () => {
+    switch (entityToAdd) {
       case 'Asset': {
-        return <AssetForScenario handleComplete={handleComplete} />
+        return <AssetForScenario handleComplete={handleAddComplete} />
       }
       case 'Expense': {
-        return <ExpensesForScenario handleComplete={handleComplete} />
+        return <ExpensesForScenario handleComplete={handleAddComplete} />
       }
       case 'Liabilities': {
-        return <LiabilitiesForScenario handleComplete={handleComplete} />
+        return <LiabilitiesForScenario handleComplete={handleAddComplete} />
       }
       default: {
         return <></>
       }
+    }
+  }
+
+  const EntityDialogToEditEntity = () => {
+    switch (entityToEdit?.type) {
+      case 'Asset':
+        return <></>
+      case 'Expense':
+        return <EditExpenseForScenario id={entityToEdit?.id} handleComplete={handleEditComplete} />
+      case 'Liabilities':
+        return <></>
+      default:
+        return <></>
     }
   }
 
@@ -118,8 +137,10 @@ export default function ScenarioWithId() {
         data={getAllScenarioEntitiesQuery.data}
         isLoading={getAllScenarioEntitiesQuery?.isLoading}
         refetch={getAllScenarioEntitiesQuery?.refetch}
+        handleEdit={setEntityToEdit}
       />
-      {EntityDialog()}
+      {EntityDialogToAddEntity()}
+      {EntityDialogToEditEntity()}
       <AddButtonForScenario handlePress={handleAddPress} />
     </View>
   )

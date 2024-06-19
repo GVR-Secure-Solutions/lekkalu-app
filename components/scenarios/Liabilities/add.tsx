@@ -60,7 +60,7 @@ const LiabilitiesForScenario = ({ handleComplete }: TLiabilityForScenario) => {
 
   return (
     <AddEditEntityForScenario
-      entityName="Liability"
+      entityName="Liabilities"
       form={form}
       inputs={LIABILITIY_INPUTS_FOR_SCENARIO}
       mutation={handleAdd}

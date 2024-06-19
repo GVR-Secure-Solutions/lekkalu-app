@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react'
-import { StyleSheet } from 'react-native'
 import { View, Text } from 'tamagui'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useLocalSearchParams, router } from 'expo-router'
@@ -12,13 +10,13 @@ import BackButton from '@/components/back-button'
 import { FontSizes } from '@/utils/fonts'
 import { useImaginaryAuth } from '@/hooks/use-imaginary-auth'
 import AddButtonForScenario from '@/components/scenarios/AddButton'
-import ExpensesForScenario from '@/components/scenarios/Expenses/add'
 import { INCOME_STATEMENT_QUERY_KEYS } from '@/utils/query-keys/income-statement'
 import { AUTH, BALANCE_SHEET } from '@/utils/query-keys'
 import ListEntity from '@/components/scenarios/Entity/ListEntity'
 import useScenario from '@/hooks/use-scenario'
-import AssetForScenario from '@/components/scenarios/Asset'
-import LiabilitiesForScenario from '@/components/scenarios/Liabilities'
+import AddAssetForScenario from '@/components/scenarios/Asset/add'
+import AddLiabilitiesForScenario from '@/components/scenarios/Liabilities/add'
+import AddExpensesForScenario from '@/components/scenarios/Expenses/add'
 import EditExpenseForScenario from '@/components/scenarios/Expenses/edit'
 
 export type ScenarioEntities = 'Asset' | 'Liabilities' | 'Expense'
@@ -85,13 +83,13 @@ export default function ScenarioWithId() {
   const EntityDialogToAddEntity = () => {
     switch (entityToAdd) {
       case 'Asset': {
-        return <AssetForScenario handleComplete={handleAddComplete} />
+        return <AddAssetForScenario handleComplete={handleAddComplete} />
       }
       case 'Expense': {
-        return <ExpensesForScenario handleComplete={handleAddComplete} />
+        return <AddExpensesForScenario handleComplete={handleAddComplete} />
       }
       case 'Liabilities': {
-        return <LiabilitiesForScenario handleComplete={handleAddComplete} />
+        return <AddLiabilitiesForScenario handleComplete={handleAddComplete} />
       }
       default: {
         return <></>
@@ -145,12 +143,3 @@ export default function ScenarioWithId() {
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  scrollContent: {
-    paddingHorizontal: wp(5),
-    marginTop: hp(2),
-    rowGap: hp(1.5),
-    paddingBottom: hp(5),
-  },
-})

@@ -54,6 +54,11 @@ const useScenario = () => {
     return data
   }
 
+  async function fetchLiabilityById(id: number) {
+    const { data } = await apiClient.get<Liability>(`loans/${id}`)
+    return data
+  }
+
   const fetchScenarioEntities = async () => {
     const liabilities = await apiClient.get<Liability[]>('loans/')
     const income = await apiClient.get<Array<IncomeStatement>>('income_expense/')
@@ -104,7 +109,7 @@ const useScenario = () => {
     mutationFn: addLiability,
   })
 
-  async function editLiability(id: number, dto: Partial<AddLiabilitySchema>) {
+  async function updateLiability(id: number, dto: Partial<AddLiabilitySchema>) {
     const { data } = await apiClient.put(`loans/${id}`, dto)
     return data
   }
@@ -156,6 +161,8 @@ const useScenario = () => {
     deleteIncomeExpenseMutation,
     deletePhysicalAssetMutation,
     fetchIncomeExpensesById,
+    fetchLiabilityById,
+    updateLiability,
   }
 }
 

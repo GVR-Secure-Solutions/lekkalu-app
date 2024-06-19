@@ -16,6 +16,7 @@ import ListEntity from '@/components/scenarios/Entity/ListEntity'
 import useScenario from '@/hooks/use-scenario'
 import AddAssetForScenario from '@/components/scenarios/Asset/add'
 import AddLiabilitiesForScenario from '@/components/scenarios/Liabilities/add'
+import EditLiabilitiesForScenario from '@/components/scenarios/Liabilities/edit'
 import AddExpensesForScenario from '@/components/scenarios/Expenses/add'
 import EditExpenseForScenario from '@/components/scenarios/Expenses/edit'
 
@@ -104,7 +105,7 @@ export default function ScenarioWithId() {
       case 'Expense':
         return <EditExpenseForScenario id={entityToEdit?.id} handleComplete={handleEditComplete} />
       case 'Liabilities':
-        return <></>
+        return <EditLiabilitiesForScenario id={entityToEdit?.id} handleComplete={handleEditComplete} />
       default:
         return <></>
     }

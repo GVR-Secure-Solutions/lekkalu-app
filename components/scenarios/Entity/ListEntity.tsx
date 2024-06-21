@@ -5,6 +5,7 @@ import { ScenarioEntities } from '@/app/(authenticated)/scenarios/[id]'
 import { wp } from '@/utils/responsive'
 import EditDeleteMenu from '@/components/edit-delete-menu/edit-delete-menu'
 import useScenario from '@/hooks/use-scenario'
+import { formatIndianMoneyNotation } from '@/utils/fn'
 
 type ListEntityType = {
   data: any
@@ -102,7 +103,7 @@ const ListEntity = ({ data, isLoading, refetch, handleEdit }: ListEntityType) =>
                 {item?.entity_type}
               </Text>
               <Text fontSize={'$7'}>{item?.name || ''}</Text>
-              <Text pt={8}>Rs. {item?.amount}</Text>
+              <Text pt={8}>Rs. {formatIndianMoneyNotation(item?.amount)}</Text>
             </View>
             <View alignSelf="center">
               <EditDeleteMenu

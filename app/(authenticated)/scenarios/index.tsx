@@ -18,6 +18,7 @@ const Scenarios = () => {
   const { data, isLoading, refetch, isRefetching } = useQuery({
     queryKey: [SCENARIO.SCENARIO],
     queryFn: fetchScenarios,
+    staleTime: 0,
   })
   return (
     <View f={1} pt={insets.top + hp(2)} bg="$backgroundHover">

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { BackHandler } from 'react-native'
 import { View, Text } from 'tamagui'
+import { useToast } from 'native-base'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useLocalSearchParams, router } from 'expo-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -40,6 +41,8 @@ export default function ScenarioWithId() {
   const insets = useSafeAreaInsets()
   const scenarioId = +params.id
 
+  const toast = useToast()
+
   const qc = useQueryClient()
 
   const { loginImaginaryUser } = useImaginaryAuth()
@@ -48,6 +51,7 @@ export default function ScenarioWithId() {
   const { data: scenario, isSuccess } = useQuery({
     queryKey: [`${SCENARIO.SCENARIO}-${scenarioId}`],
     queryFn: () => fetchScenarioById(scenarioId),
+    staleTime: 0,
   })
 
   const {
@@ -64,8 +68,18 @@ export default function ScenarioWithId() {
   }
 
   const handleEditPrivacy = () => {
-    mutate({ access: 'Private' })
+    mutate({ access: scenario?.access === 'Private' ? 'Public' : 'Private' })
   }
+
+  useEffect(() => {
+    if (isEditSuccess) {
+      qc.invalidateQueries({
+        queryKey: [`${SCENARIO.SCENARIO}-${scenarioId}`],
+      })
+      toast.show({ title: 'Privacy changed successfully' })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEditSuccess])
 
   useEffect(() => {
     const backButtonPress = BackHandler.addEventListener('hardwareBackPress', handleBack)
@@ -162,7 +176,7 @@ export default function ScenarioWithId() {
         </View>
         <View>
           <PrivacyButtonForScenario
-            isPublic={false}
+            isPublic={scenario?.access === 'Public'}
             handleMutation={handleEditPrivacy}
             isSuccess={isEditSuccess}
             isLoading={isPending}

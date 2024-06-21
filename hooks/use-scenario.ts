@@ -121,8 +121,8 @@ const useScenario = () => {
 
   const deleteLiabilityMutation = useMutation({ mutationFn: deleteLiability })
 
-  async function fetchPhysicalAssets() {
-    const { data } = await apiClient.get<PhysicalAsset[]>('physical_assets/')
+  async function fetchPhysicalAssetsById(id: number) {
+    const { data } = await apiClient.get<PhysicalAsset>(`physical_assets/${id}`)
     return data
   }
 
@@ -142,7 +142,7 @@ const useScenario = () => {
     mutationFn: addPhysicalAsset,
   })
 
-  async function editPhysicalAsset(id: number, dto: Partial<AddPhysicalAssetSchemaForScenario>) {
+  async function updatePhysicalAsset(id: number, dto: Partial<AddPhysicalAssetSchemaForScenario>) {
     const { data } = await apiClient.put(`physical_assets/${id}`, dto)
     return data
   }
@@ -163,6 +163,8 @@ const useScenario = () => {
     fetchIncomeExpensesById,
     fetchLiabilityById,
     updateLiability,
+    fetchPhysicalAssetsById,
+    updatePhysicalAsset,
   }
 }
 

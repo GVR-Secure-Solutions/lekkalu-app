@@ -19,6 +19,7 @@ import AddLiabilitiesForScenario from '@/components/scenarios/Liabilities/add'
 import EditLiabilitiesForScenario from '@/components/scenarios/Liabilities/edit'
 import AddExpensesForScenario from '@/components/scenarios/Expenses/add'
 import EditExpenseForScenario from '@/components/scenarios/Expenses/edit'
+import EditAssetForScenario from '@/components/scenarios/Asset/edit'
 
 export type ScenarioEntities = 'Asset' | 'Liabilities' | 'Expense'
 
@@ -101,7 +102,7 @@ export default function ScenarioWithId() {
   const EntityDialogToEditEntity = () => {
     switch (entityToEdit?.type) {
       case 'Asset':
-        return <></>
+        return <EditAssetForScenario id={entityToEdit?.id} handleComplete={handleEditComplete} />
       case 'Expense':
         return <EditExpenseForScenario id={entityToEdit?.id} handleComplete={handleEditComplete} />
       case 'Liabilities':

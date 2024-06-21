@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useLocalSearchParams, router } from 'expo-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { SCENARIO } from '@/utils/query-keys/scenarios'
-import { editScenario, fetchScenarioById } from '@/queries/scenario'
+import { editScenario, fetchScenarioById, fetchScenarios } from '@/queries/scenario'
 import { hp, wp } from '@/utils/responsive'
 import BackButton from '@/components/back-button'
 import { FontSizes } from '@/utils/fonts'
@@ -75,6 +75,10 @@ export default function ScenarioWithId() {
     if (isEditSuccess) {
       qc.invalidateQueries({
         queryKey: [`${SCENARIO.SCENARIO}-${scenarioId}`],
+      })
+      qc.prefetchQuery({
+        queryKey: [`${SCENARIO.SCENARIO}`],
+        queryFn: fetchScenarios,
       })
       toast.show({ title: 'Privacy changed successfully' })
     }

@@ -66,7 +66,7 @@ const ListEntity = ({ data, isLoading, refetch, handleEdit }: ListEntityType) =>
 
   return (
     <FlatList
-      style={{ padding: 20 }}
+      style={{ paddingHorizontal: 20, marginTop: 20, marginBottom: 40 }}
       data={data}
       refreshing={isLoading}
       ListEmptyComponent={() => {

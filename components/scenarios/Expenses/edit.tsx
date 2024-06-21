@@ -59,14 +59,11 @@ const EditExpenseForScenario = ({ id, handleComplete }: EditExpenseForScenarioTy
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateIncomeExpenseMutation.isSuccess])
 
-  if (fetchIncomeExpenseByIdQuery.isLoading) {
-    return <></>
-  }
-
   return (
     <AddEditEntityForScenario
-      isEdit
       entityName="Expense"
+      isEdit
+      isFetchingEntity={fetchIncomeExpenseByIdQuery.isLoading}
       form={form}
       inputs={inputs}
       mutation={handleEdit}

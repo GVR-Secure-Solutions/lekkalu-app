@@ -23,7 +23,7 @@ const EditLiabilitiesForScenario = ({ id, handleComplete }: EditLiabilitiesForSc
 
   const { getAllScenarioEntitiesQuery, updateLiability, fetchLiabilityById } = useScenario()
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: [`${BALANCE_SHEET.LIABILITIES}-${id}-${IMAGINARY_USER?.username}`],
     queryFn: () => fetchLiabilityById(id),
     select: (data) => {
@@ -66,8 +66,9 @@ const EditLiabilitiesForScenario = ({ id, handleComplete }: EditLiabilitiesForSc
 
   return (
     <AddEditEntityForScenario
-      isEdit
       entityName="Liabilities"
+      isEdit
+      isFetchingEntity={isLoading}
       form={form}
       inputs={LIABILITIY_INPUTS_FOR_SCENARIO}
       mutation={handleEdit}

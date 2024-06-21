@@ -50,7 +50,7 @@ export default function EachScenario({ item }: any) {
       style={[styles.container, { backgroundColor: theme.background.get() }]}
     >
       <View display="flex" flexDirection="row" gap={20}>
-        <View>{item?.access === 'Private' ? <Lock /> : <Unlock />}</View>
+        <View justifyContent="center">{item?.access === 'Private' ? <Lock /> : <Unlock />}</View>
         <View width={'$15'}>
           <Text>{item?.name}</Text>
         </View>

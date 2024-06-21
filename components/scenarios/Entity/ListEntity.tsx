@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { TouchableOpacity } from 'react-native'
 import { View, Text, useTheme } from 'tamagui'
 import { FlatList } from 'native-base'
 import { ScenarioEntities } from '@/app/(authenticated)/scenarios/[id]'
@@ -98,13 +99,16 @@ const ListEntity = ({ data, isLoading, refetch, handleEdit }: ListEntityType) =>
             shadowRadius={wp(1)}
             flexDirection="row"
           >
-            <View w="90%">
+            <TouchableOpacity
+              style={{ width: '90%' }}
+              onPress={() => handleEdit({ id: item.id, type: item?.entity_type })}
+            >
               <Text fontSize={'$1'} mb={3} color={getTextColor(item?.entity_type)}>
                 {item?.entity_type}
               </Text>
               <Text fontSize={'$7'}>{item?.name || ''}</Text>
               <Text pt={8}>Rs. {formatIndianMoneyNotation(item?.amount)}</Text>
-            </View>
+            </TouchableOpacity>
             <View alignSelf="center">
               <EditDeleteMenu
                 onDelete={() => handleDelete(item?.entity_type, item?.id)}

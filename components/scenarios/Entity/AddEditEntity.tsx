@@ -13,6 +13,7 @@ import { ScenarioEntities } from '@/app/(authenticated)/scenarios/[id]'
 
 type EntityForScenarioType = {
   isEdit?: boolean
+  isFetchingEntity?: boolean
   inputs: InputField[]
   entityName: ScenarioEntities
   form: UseFormReturn<any>
@@ -29,6 +30,7 @@ const AddEditEntityForScenario = ({
   mutation,
   isLoading,
   handleComplete,
+  isFetchingEntity = false,
 }: EntityForScenarioType) => {
   const navigation = useNavigation()
 
@@ -48,30 +50,38 @@ const AddEditEntityForScenario = ({
   return (
     <Modal avoidKeyboard isOpen={true} onClose={handleComplete} size={'full'}>
       <Modal.Content style={{ backgroundColor: background }}>
-        <Modal.CloseButton />
         <Modal.Body>
           <View f={1} style={{ paddingHorizontal: wp(10), marginTop: hp(3) }}>
-            <View fd="row" ai="center" columnGap={wp(4)} mb={wp(5)}>
-              <Text fontSize={FontSizes.size20} fontFamily={'$heading'} color={textColor}>
+            <View fd="row" ai="center" columnGap={wp(4)} mb={wp(5)} position="fixed">
+              <Text fontSize={FontSizes.size20} fontFamily={'$heading'} color={textColor} alignSelf="center" pt={15}>
                 {entityName}
               </Text>
+              <Modal.CloseButton />
             </View>
-            <KeyboardScrollView>
-              <View rowGap={hp(1)}>
-                <InputFields control={form.control} errors={form.formState.errors} inputs={inputs} />
+            {isFetchingEntity ? (
+              <View h={hp(80)}>
+                <Text fontSize={FontSizes.size15} fontFamily={'$heading'} color={textColor}>
+                  Please wait...
+                </Text>
               </View>
-              <Button
-                fontSize={FontSizes.size18}
-                h={hp(5.5)}
-                onPress={mutation}
-                bg="$primary"
-                color="white"
-                mt={hp(4)}
-                disabled={isLoading || !form.formState.isDirty}
-              >
-                {isEdit ? `Edit ${entityName}` : `Add ${entityName}`}
-              </Button>
-            </KeyboardScrollView>
+            ) : (
+              <KeyboardScrollView>
+                <View rowGap={hp(1)}>
+                  <InputFields control={form.control} errors={form.formState.errors} inputs={inputs} />
+                </View>
+                <Button
+                  fontSize={FontSizes.size18}
+                  h={hp(5.5)}
+                  onPress={mutation}
+                  bg="$primary"
+                  color="white"
+                  mt={hp(4)}
+                  disabled={isLoading || !form.formState.isDirty}
+                >
+                  {isEdit ? `Edit ${entityName}` : `Add ${entityName}`}
+                </Button>
+              </KeyboardScrollView>
+            )}
           </View>
         </Modal.Body>
       </Modal.Content>

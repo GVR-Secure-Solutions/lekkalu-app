@@ -23,7 +23,7 @@ const EditAssetForScenario = ({ id, handleComplete }: EditAssetForScenarioType) 
 
   const { getAllScenarioEntitiesQuery, fetchPhysicalAssetsById, updatePhysicalAsset } = useScenario()
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: [`${BALANCE_SHEET.ASSETS}-${id}-${IMAGINARY_USER?.username}`],
     queryFn: () => fetchPhysicalAssetsById(id),
     staleTime: 0,
@@ -69,12 +69,14 @@ const EditAssetForScenario = ({ id, handleComplete }: EditAssetForScenarioType) 
       getAllScenarioEntitiesQuery.refetch()
       handleComplete()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccess])
 
   return (
     <AddEditEntityForScenario
-      isEdit
       entityName="Asset"
+      isEdit
+      isFetchingEntity={isLoading}
       form={form}
       inputs={ASSET_INPUTS_FOR_SCENARIO}
       mutation={handleEdit}

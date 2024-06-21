@@ -3,9 +3,9 @@ import { BackHandler } from 'react-native'
 import { View, Text } from 'tamagui'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useLocalSearchParams, router } from 'expo-router'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { SCENARIO } from '@/utils/query-keys/scenarios'
-import { fetchScenarioById } from '@/queries/scenario'
+import { editScenario, fetchScenarioById } from '@/queries/scenario'
 import { hp, wp } from '@/utils/responsive'
 import BackButton from '@/components/back-button'
 import { FontSizes } from '@/utils/fonts'
@@ -21,6 +21,8 @@ import EditLiabilitiesForScenario from '@/components/scenarios/Liabilities/edit'
 import AddExpensesForScenario from '@/components/scenarios/Expenses/add'
 import EditExpenseForScenario from '@/components/scenarios/Expenses/edit'
 import EditAssetForScenario from '@/components/scenarios/Asset/edit'
+import PrivacyButtonForScenario from '@/components/scenarios/PrivacyButton'
+import { AddScenarioSchemas } from '@/schema/scenarios'
 
 export type ScenarioEntities = 'Asset' | 'Liabilities' | 'Expense'
 
@@ -48,9 +50,21 @@ export default function ScenarioWithId() {
     queryFn: () => fetchScenarioById(scenarioId),
   })
 
+  const {
+    mutate,
+    isSuccess: isEditSuccess,
+    isPending,
+  } = useMutation({
+    mutationFn: (value: Partial<AddScenarioSchemas>) => editScenario(scenarioId, value),
+  })
+
   function handleBack() {
     router.push('/(authenticated)/scenarios/')
     return true
+  }
+
+  const handleEditPrivacy = () => {
+    mutate({ access: 'Private' })
   }
 
   useEffect(() => {
@@ -139,11 +153,21 @@ export default function ScenarioWithId() {
 
   return (
     <View f={1} pt={insets.top + hp(2)} bg="$backgroundHover">
-      <View fd="row" ai="center" columnGap={wp(4)} mx={wp(5)}>
-        <BackButton onPress={() => router.push('/(authenticated)/scenarios/')} />
-        <Text fontSize={FontSizes.size20} fontFamily={'$heading'} w={'85%'}>
-          {scenario?.name}
-        </Text>
+      <View fd="row" ml={wp(5)} mr={wp(14)}>
+        <View fd="row" columnGap={wp(4)}>
+          <BackButton onPress={() => router.push('/(authenticated)/scenarios/')} />
+          <Text fontSize={FontSizes.size20} fontFamily={'$heading'} w={'85%'}>
+            {scenario?.name}
+          </Text>
+        </View>
+        <View>
+          <PrivacyButtonForScenario
+            isPublic={false}
+            handleMutation={handleEditPrivacy}
+            isSuccess={isEditSuccess}
+            isLoading={isPending}
+          />
+        </View>
       </View>
       <ListEntity
         data={getAllScenarioEntitiesQuery.data}

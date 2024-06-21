@@ -17,7 +17,7 @@ export async function fetchScenarioById(id: number) {
   return data
 }
 
-export async function editScenario(id: number, dto: Partial<Scenario>) {
+export async function editScenario(id: number, dto: Partial<AddScenarioSchemas>) {
   const { data } = await v1ApiClient.put<Scenario>(`/scenario/${id}`, dto)
   return data
 }

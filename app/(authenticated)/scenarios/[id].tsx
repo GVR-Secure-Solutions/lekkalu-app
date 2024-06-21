@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { BackHandler } from 'react-native'
 import { View, Text } from 'tamagui'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useLocalSearchParams, router } from 'expo-router'
@@ -46,6 +47,17 @@ export default function ScenarioWithId() {
     queryKey: [`${SCENARIO.SCENARIO}-${scenarioId}`],
     queryFn: () => fetchScenarioById(scenarioId),
   })
+
+  function handleBack() {
+    router.push('/(authenticated)/scenarios/')
+    return true
+  }
+
+  useEffect(() => {
+    const backButtonPress = BackHandler.addEventListener('hardwareBackPress', handleBack)
+
+    return () => backButtonPress.remove()
+  }, [])
 
   useEffect(() => {
     return () => {
@@ -116,7 +128,7 @@ export default function ScenarioWithId() {
     return (
       <View f={1} pt={insets.top + hp(2)} bg="$backgroundHover">
         <View fd="row" ai="center" columnGap={wp(4)} mx={wp(5)}>
-          <BackButton onPress={() => router.push('/(authenticated)/scenarios/')} />
+          <BackButton onPress={handleBack} />
           <Text fontSize={FontSizes.size20} fontFamily={'$heading'}>
             Please wait.
           </Text>
@@ -129,7 +141,7 @@ export default function ScenarioWithId() {
     <View f={1} pt={insets.top + hp(2)} bg="$backgroundHover">
       <View fd="row" ai="center" columnGap={wp(4)} mx={wp(5)}>
         <BackButton onPress={() => router.push('/(authenticated)/scenarios/')} />
-        <Text fontSize={FontSizes.size20} fontFamily={'$heading'}>
+        <Text fontSize={FontSizes.size20} fontFamily={'$heading'} w={'85%'}>
           {scenario?.name}
         </Text>
       </View>

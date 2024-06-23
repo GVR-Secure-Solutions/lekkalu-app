@@ -1,6 +1,8 @@
 import React from 'react'
-import { StyleSheet } from 'react-native'
+import { StyleSheet, TouchableOpacity } from 'react-native'
 import { Text, View } from 'tamagui'
+import { router } from 'expo-router'
+import { Plus } from '@tamagui/lucide-icons'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { FlatList } from 'native-base'
 import { useQuery } from '@tanstack/react-query'
@@ -10,6 +12,7 @@ import { FontSizes } from '@/utils/fonts'
 import { COMPARISON } from '@/utils/query-keys/scenarios'
 import { fetchComparisons } from '@/queries/scenario'
 import EachComparison from '@/components/comparisons/EachComparison'
+import { THEME_COLORS } from '@/utils/theme'
 
 const Comparisons = () => {
   const insets = useSafeAreaInsets()
@@ -50,6 +53,9 @@ const Comparisons = () => {
         refreshing={isRefetching}
         renderItem={({ item }) => <EachComparison id={item?.id} name={item?.name} access={item?.access} />}
       />
+      <TouchableOpacity style={styles.fab} onPress={() => router.push('/(authenticated)/comparisons/add')}>
+        <Plus size={wp(8)} color={'white'} />
+      </TouchableOpacity>
     </View>
   )
 }
@@ -61,5 +67,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(5),
     rowGap: hp(1.5),
     paddingBottom: hp(10),
+  },
+  fab: {
+    height: wp(12),
+    width: wp(12),
+    borderRadius: wp(6),
+    backgroundColor: THEME_COLORS.primary[500],
+    justifyContent: 'center',
+    alignItems: 'center',
+    bottom: hp(3),
+    position: 'absolute',
+    right: wp(8),
   },
 })

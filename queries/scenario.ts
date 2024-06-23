@@ -1,6 +1,7 @@
 import { apiClient as v1ApiClient } from '@/utils/client'
 import { Comparison, Scenario } from '@/types/scenarios'
 import { AddScenarioSchemas } from '@/schema/scenarios'
+import { AddComparisonSchema } from '@/schema/comparisons'
 
 export async function fetchScenarios() {
   const { data } = await v1ApiClient.get<Scenario[]>('/scenario/')
@@ -31,5 +32,10 @@ export async function deleteScenario(id: number) {
 
 export async function fetchComparisons() {
   const { data } = await v1ApiClient.get<Comparison[]>('/comparison/')
+  return data
+}
+
+export async function createComparison(dto: AddComparisonSchema) {
+  const { data } = await v1ApiClient.post<Comparison>('/comparison/', dto)
   return data
 }

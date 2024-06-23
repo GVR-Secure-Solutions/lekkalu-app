@@ -1,20 +1,24 @@
-import React from 'react'
-import { StyleSheet } from 'react-native'
+import React, { useMemo, useState } from 'react'
+import { StyleSheet, TouchableOpacity } from 'react-native'
 import { View, Text, Button } from 'tamagui'
+import { FlatList } from 'native-base'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useForm } from 'react-hook-form'
 import { router, useLocalSearchParams } from 'expo-router'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { hp, wp } from '@/utils/responsive'
+import Scenario from '@/components/comparisons/ScenarioInComparison/InAddScreen'
 import BackButton from '@/components/back-button/back-button'
 import { FontSizes } from '@/utils/fonts'
 import KeyboardScrollView from '@/components/keyboard-scroll-view/keyboard-scroll-view'
 import { AddComparisonSchema, addComparisonSchema } from '@/schema/comparisons'
 import InputFields from '@/components/input-fields/input-fields'
 import { COMPARISON_INPUT } from '@/utils/comparisons'
-import { createComparison } from '@/queries/scenario'
-import { COMPARISON } from '@/utils/query-keys/scenarios'
+import { createComparison, fetchScenarios } from '@/queries/scenario'
+import { COMPARISON, SCENARIO } from '@/utils/query-keys/scenarios'
+import { Scenario as ScenarioType } from '@/types/scenarios'
+import ScenarioDialogInComparison from '@/components/comparisons/ScenarioDialog'
 
 const AddComparison = () => {
   const insets = useSafeAreaInsets()
@@ -22,17 +26,19 @@ const AddComparison = () => {
   const qc = useQueryClient()
   const isEdit: boolean = !!params?.edit
 
-  const defaultFormValues = {
-    name: isEdit ? '' : undefined,
-    access: isEdit ? '' : undefined,
-    scenarios: isEdit ? [] : undefined,
+  const [isScenarioModalOpen, setIsScenarioModalOpen] = useState(false)
+
+  const defaultFormValues: AddComparisonSchema = {
+    name: isEdit ? '' : '',
+    access: isEdit ? 'Public' : 'Public',
+    scenarios: isEdit ? [] : [],
   }
 
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<AddComparisonSchema>({
     resolver: zodResolver(addComparisonSchema),
     defaultValues: defaultFormValues,
   })
@@ -45,8 +51,34 @@ const AddComparison = () => {
     },
   })
 
+  const { data: allScenarios } = useQuery({
+    queryKey: [SCENARIO.SCENARIO],
+    queryFn: fetchScenarios,
+  })
+
+  const [scenariosInThisComparison, setScenariosInThisComparison] = useState<Array<ScenarioType>>([])
+
   const handleFormSubmitButton = (values: AddComparisonSchema) => {
-    addComparison(values)
+    const _values = {
+      ...values,
+      scenarios: scenariosInThisComparison?.map((each) => each?.id),
+    }
+    addComparison(_values)
+  }
+
+  const removeScenarioFromThisComparison = (id: number) => {
+    const _filterdScenario = scenariosInThisComparison.filter((each) => each?.id !== id)
+    setScenariosInThisComparison(_filterdScenario)
+  }
+
+  const scenariosAvailableToAdd = useMemo(() => {
+    const alreadyAddedScenarioIds = scenariosInThisComparison.map((each) => each?.id)
+    return allScenarios?.filter((each) => !alreadyAddedScenarioIds.includes(each?.id))
+  }, [scenariosInThisComparison, allScenarios])
+
+  const handleAddScenarioToComparison = (scenarios: ScenarioType[]) => {
+    setScenariosInThisComparison(scenarios)
+    setIsScenarioModalOpen(false)
   }
 
   return (
@@ -59,10 +91,32 @@ const AddComparison = () => {
       </View>
       <KeyboardScrollView contentContainerStyle={styles.scrollContent}>
         <InputFields control={control} errors={errors} inputs={COMPARISON_INPUT} />
-        <View borderColor={'red'} borderWidth="1" borderStyle="solid">
+        <View fd={'row'} justifyContent="space-between">
           <Text fontSize={FontSizes.size16} mt={10} color={'gray'}>
             Scenarios in this comparison
           </Text>
+          <TouchableOpacity style={{ alignSelf: 'center' }} onPress={() => setIsScenarioModalOpen(true)}>
+            <Text color={'$blue10'}>Add</Text>
+          </TouchableOpacity>
+        </View>
+        <View f={1} backgroundColor={'$background'} borderRadius={'$3'} p={'$5'}>
+          <FlatList
+            contentContainerStyle={{ gap: 20 }}
+            data={scenariosInThisComparison}
+            ListEmptyComponent={() => (
+              <View>
+                <Text>No scenarios in this component</Text>
+              </View>
+            )}
+            renderItem={({ item }) => (
+              <Scenario
+                id={item?.id}
+                name={item?.name}
+                handleRemove={removeScenarioFromThisComparison}
+                access={item?.access}
+              />
+            )}
+          />
         </View>
         <Button
           fontSize={FontSizes.size18}
@@ -76,6 +130,12 @@ const AddComparison = () => {
           {isEdit ? 'Edit Comparison' : 'Create Comparison'}
         </Button>
       </KeyboardScrollView>
+      <ScenarioDialogInComparison
+        data={scenariosAvailableToAdd || []}
+        isModalOpen={isScenarioModalOpen}
+        handleAdd={handleAddScenarioToComparison}
+        handleModalClose={() => setIsScenarioModalOpen(false)}
+      />
     </View>
   )
 }

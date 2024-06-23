@@ -1,9 +1,8 @@
-import { Modal } from 'native-base'
 import React, { useState } from 'react'
+import { useColorScheme } from 'react-native'
+import { Modal } from 'native-base'
 import { View, Text, Button } from 'tamagui'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { FontSizes } from '@/utils/fonts'
-import { hp } from '@/utils/responsive'
 import SelectScenarioToAddInComparison from '../ScenarioInComparison/SelectScenarioToAddInComparison'
 import { Scenario } from '@/types/scenarios'
 
@@ -20,11 +19,19 @@ const ScenarioDialogInComparison = ({
   handleModalClose,
   handleAdd,
 }: ScenarioDialogInComparisonType) => {
-  const insets = useSafeAreaInsets()
   const [selectedScenarios, setSelectedScenarios] = useState<Scenario[]>([])
+
+  const systemTheme = useColorScheme()
+  const background = systemTheme === 'dark' ? '#2d3436' : 'white'
+  const textColor = systemTheme === 'dark' ? 'white' : '#2d3436'
 
   const checkSelected = (id: number) => {
     return selectedScenarios?.map((each) => each?.id).includes(id)
+  }
+
+  const handleClose = () => {
+    setSelectedScenarios([])
+    handleModalClose()
   }
 
   const handleScenarioPress = (id: number) => {
@@ -44,34 +51,38 @@ const ScenarioDialogInComparison = ({
   }
 
   return (
-    <Modal avoidKeyboard isOpen={isModalOpen} onClose={handleModalClose} size="full">
-      <Modal.Body>
-        <View pt={insets.top + hp(5)} fd="row" jc={'space-between'}>
+    <Modal avoidKeyboard isOpen={isModalOpen} onClose={handleClose} size="full">
+      <Modal.Content style={{ backgroundColor: background }}>
+        <Modal.Header style={{ backgroundColor: background }}>
           <View>
-            <Text fontSize={FontSizes.size20}>Add Scenario to this comparison.</Text>
+            <Text fontSize={FontSizes.size15} color={textColor}>
+              Add Scenario to this comparison.
+            </Text>
           </View>
-          <View>
-            <Modal.CloseButton />
+        </Modal.Header>
+        <Modal.Body>
+          <View fd="row" jc={'space-between'}>
+            <View>
+              <Modal.CloseButton />
+            </View>
           </View>
-        </View>
-        <View>
-          {data?.map((each) => (
-            <SelectScenarioToAddInComparison
-              isPrivate={each?.access === 'Private'}
-              name={each?.name}
-              isSelected={checkSelected(each?.id)}
-              key={each?.id}
-              onPress={handleScenarioPress}
-              id={each?.id}
-            />
-          ))}
-        </View>
-        <View>
+          <View gap={10} pb={15}>
+            {data?.map((each) => (
+              <SelectScenarioToAddInComparison
+                isPrivate={each?.access === 'Private'}
+                name={each?.name}
+                isSelected={checkSelected(each?.id)}
+                key={each?.id}
+                onPress={handleScenarioPress}
+                id={each?.id}
+              />
+            ))}
+          </View>
           <Button onPress={handleAddPress}>
             <Text>Add Scenarios</Text>
           </Button>
-        </View>
-      </Modal.Body>
+        </Modal.Body>
+      </Modal.Content>
     </Modal>
   )
 }

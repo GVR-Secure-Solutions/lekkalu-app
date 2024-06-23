@@ -1,5 +1,5 @@
 import { apiClient as v1ApiClient } from '@/utils/client'
-import { Scenario } from '@/types/scenarios'
+import { Comparison, Scenario } from '@/types/scenarios'
 import { AddScenarioSchemas } from '@/schema/scenarios'
 
 export async function fetchScenarios() {
@@ -24,5 +24,12 @@ export async function editScenario(id: number, dto: Partial<AddScenarioSchemas>)
 
 export async function deleteScenario(id: number) {
   const { data } = await v1ApiClient.delete<Scenario>(`/scenario/${id}`)
+  return data
+}
+
+// All comparison related APIs
+
+export async function fetchComparisons() {
+  const { data } = await v1ApiClient.get<Comparison[]>('/comparison/')
   return data
 }

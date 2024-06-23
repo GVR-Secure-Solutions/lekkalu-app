@@ -9,6 +9,7 @@ import { FontSizes } from '@/utils/fonts'
 interface EditDeleteMenuProps {
   onEdit?: () => void
   onDelete?: () => void
+  extraMenus?: Array<{ style?: {}; name: string; onPress: () => void }>
 }
 
 const EditDeleteMenu: FC<EditDeleteMenuProps> = (props) => {
@@ -51,6 +52,15 @@ const EditDeleteMenu: FC<EditDeleteMenuProps> = (props) => {
       <MenuItem textStyle={{ color: 'red', fontSize: FontSizes.size16 }} onPress={handleDeletePress}>
         Delete
       </MenuItem>
+      {props.extraMenus ? (
+        props.extraMenus?.map((each) => (
+          <MenuItem key={each?.name} textStyle={each?.style} onPress={each?.onPress}>
+            {each?.name}
+          </MenuItem>
+        ))
+      ) : (
+        <></>
+      )}
     </Menu>
   )
 }

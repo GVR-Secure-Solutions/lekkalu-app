@@ -26,7 +26,11 @@ const EachComparison = ({ access, name, id }: EachComparisonType) => {
         </View>
       </View>
       <View als={'flex-start'}>
-        <EditDeleteMenu onEdit={() => {}} onDelete={() => {}} />
+        <EditDeleteMenu
+          onEdit={() => {}}
+          onDelete={() => {}}
+          extraMenus={[{ name: `Set to ${access === 'Private' ? 'Public' : 'Private'}`, onPress: () => {} }]}
+        />
       </View>
     </TouchableOpacity>
   )

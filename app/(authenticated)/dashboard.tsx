@@ -2,7 +2,7 @@ import React from 'react'
 import { View, Text } from 'tamagui'
 import { Feather, FontAwesome } from '@expo/vector-icons'
 import { router } from 'expo-router'
-import { BookCopy, Target } from '@tamagui/lucide-icons'
+import { BookCopy, GitCompare, Target } from '@tamagui/lucide-icons'
 
 import FeatureCard from '@/components/feature-card'
 import { hp, wp } from '@/utils/responsive'
@@ -26,6 +26,11 @@ const features = [
     title: 'Scenarios',
     image: <BookCopy size={wp(7)} color={THEME_COLORS.primary[100]} />,
   },
+  {
+    title: 'Comparisons',
+    // image: <BookCopy size={wp(7)} color={THEME_COLORS.primary[100]} />,
+    image: <GitCompare size={wp(7)} color={THEME_COLORS.primary[100]} />,
+  },
 ]
 
 const Dashboard = () => {
@@ -42,6 +47,9 @@ const Dashboard = () => {
         break
       case 'Scenarios':
         router.push('/(authenticated)/scenarios')
+        break
+      case 'Comparisons':
+        router.push('/(authenticated)/comparisons')
         break
       default:
         break

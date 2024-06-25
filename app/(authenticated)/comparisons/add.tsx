@@ -29,9 +29,15 @@ const AddComparison = () => {
 
   const [isScenarioModalOpen, setIsScenarioModalOpen] = useState(false)
 
-  const { data: comparison, isSuccess: fetchedComparisonByIdSuccessfully } = useQuery({
+  const {
+    data: comparison,
+    isSuccess: fetchedComparisonByIdSuccessfully,
+    isLoading,
+  } = useQuery({
     queryKey: [`${COMPARISON.COMPARISON}-${comparisonId}`],
     queryFn: () => fetchComparisonById(comparisonId),
+    staleTime: 0,
+    enabled: isEdit,
   })
 
   const defaultFormValues: AddComparisonSchema = {
@@ -46,7 +52,7 @@ const AddComparison = () => {
     formState: { errors },
   } = useForm<AddComparisonSchema>({
     resolver: zodResolver(addComparisonSchema),
-    defaultValues: defaultFormValues,
+    values: defaultFormValues,
   })
 
   const { mutate: addComparison } = useMutation({
@@ -113,47 +119,61 @@ const AddComparison = () => {
           {isEdit ? 'Edit Comparison' : 'Add Comparison'}
         </Text>
       </View>
-      <KeyboardScrollView contentContainerStyle={styles.scrollContent}>
-        <InputFields control={control} errors={errors} inputs={COMPARISON_INPUT} />
-        <View fd={'row'} justifyContent="space-between">
-          <Text fontSize={FontSizes.size16} mt={10} color={'gray'}>
-            Scenarios in this comparison
-          </Text>
-          <TouchableOpacity style={{ alignSelf: 'center' }} onPress={() => setIsScenarioModalOpen(true)}>
-            <Text color={'$blue10'}>Add</Text>
-          </TouchableOpacity>
-        </View>
-        <View f={1} backgroundColor={'$background'} borderRadius={'$3'} p={'$5'}>
-          <FlatList
-            contentContainerStyle={{ gap: 20 }}
-            data={scenariosInThisComparison}
-            ListEmptyComponent={() => (
-              <View>
-                <Text>No scenarios in this component</Text>
-              </View>
-            )}
-            renderItem={({ item }) => (
-              <Scenario
-                id={item?.id}
-                name={item?.name}
-                handleRemove={removeScenarioFromThisComparison}
-                access={item?.access}
-              />
-            )}
-          />
-        </View>
-        <Button
-          fontSize={FontSizes.size18}
-          h={hp(5.5)}
-          onPress={handleSubmit(handleFormSubmitButton)}
-          bg={'$primary'}
-          color={'white'}
-          mt={hp(2)}
-          mb={hp(5)}
-        >
-          {isEdit ? 'Edit Comparison' : 'Create Comparison'}
-        </Button>
-      </KeyboardScrollView>
+      {isEdit && isLoading ? (
+        <></>
+      ) : (
+        <KeyboardScrollView contentContainerStyle={styles.scrollContent}>
+          <InputFields control={control} errors={errors} inputs={COMPARISON_INPUT} />
+          <View fd={'row'} justifyContent="space-between">
+            <Text fontSize={FontSizes.size16} mt={10} color={'gray'}>
+              Scenarios in this comparison
+            </Text>
+            <TouchableOpacity style={{ alignSelf: 'center' }} onPress={() => setIsScenarioModalOpen(true)}>
+              <Text color={'$blue10'}>Add</Text>
+            </TouchableOpacity>
+          </View>
+          <View f={1} backgroundColor={'$background'} borderRadius={'$3'}>
+            <FlatList
+              contentContainerStyle={{ gap: 20, padding: 20 }}
+              data={scenariosInThisComparison}
+              ListEmptyComponent={() => {
+                if (isEdit && isLoading) {
+                  return (
+                    <View>
+                      <Text>Loading...</Text>
+                    </View>
+                  )
+                }
+
+                return (
+                  <View>
+                    <Text>No scenarios in this component</Text>
+                  </View>
+                )
+              }}
+              renderItem={({ item }) => (
+                <Scenario
+                  id={item?.id}
+                  name={item?.name}
+                  handleRemove={removeScenarioFromThisComparison}
+                  access={item?.access}
+                />
+              )}
+            />
+          </View>
+          <Button
+            fontSize={FontSizes.size18}
+            h={hp(5.5)}
+            onPress={handleSubmit(handleFormSubmitButton)}
+            bg={'$primary'}
+            color={'white'}
+            mt={hp(2)}
+            mb={hp(5)}
+          >
+            {isEdit ? 'Edit Comparison' : 'Create Comparison'}
+          </Button>
+        </KeyboardScrollView>
+      )}
       <ScenarioDialogInComparison
         data={scenariosAvailableToAdd || []}
         isModalOpen={isScenarioModalOpen}

@@ -184,6 +184,7 @@ export default function ScenarioWithId() {
             handleMutation={handleEditPrivacy}
             isSuccess={isEditSuccess}
             isLoading={isPending}
+            name="scenario"
           />
         </View>
       </View>

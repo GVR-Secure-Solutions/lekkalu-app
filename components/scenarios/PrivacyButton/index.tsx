@@ -9,9 +9,16 @@ type PrivacyButtonForScenarioType = {
   handleMutation: () => void
   isSuccess: boolean
   isLoading: boolean
+  name: string
 }
 
-const PrivacyButtonForScenario = ({ isPublic, handleMutation, isSuccess, isLoading }: PrivacyButtonForScenarioType) => {
+const PrivacyButtonForScenario = ({
+  isPublic,
+  handleMutation,
+  isSuccess,
+  isLoading,
+  name = 'scenario',
+}: PrivacyButtonForScenarioType) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   const onPressYes = () => {
@@ -33,7 +40,7 @@ const PrivacyButtonForScenario = ({ isPublic, handleMutation, isSuccess, isLoadi
           <Dialog.Content style={{ width: '90%' }} key={'Privacy-dialog-content'}>
             <Dialog.Title>
               <Text fontSize={FontSizes.size13}>
-                {`Are you sure you want to make this scenario ${isPublic ? 'private' : 'public'}`}?
+                {`Are you sure you want to make this ${name} ${isPublic ? 'private' : 'public'}`}?
               </Text>
             </Dialog.Title>
             <View mt={10}>

@@ -79,18 +79,13 @@ const EditDeleteMenu: FC<EditDeleteMenuProps> = (props) => {
       </Menu>
       <Modal isOpen={viewDeleteDialog} onClose={() => setViewDeleteDialog(false)}>
         <Modal.Content>
-          <Modal.Header>
-            <View>
-              <Text color={theme.foreground.get()}>Delete</Text>
-            </View>
-          </Modal.Header>
           <Modal.Body>
             <View>
-              <Text color={theme.foreground.get()}>Are you sure you want to delete this?</Text>
+              <Text color={theme.foreground.get()} fontSize={FontSizes.size13}>
+                Are you sure you want to delete this?
+              </Text>
             </View>
-          </Modal.Body>
-          <Modal.Footer>
-            <View f={1} fd={'row'} gap={'$5'}>
+            <View f={1} fd={'row'} gap={'$5'} mt={'$3'}>
               <Button onPress={() => setViewDeleteDialog(false)} f={1}>
                 Cancel
               </Button>
@@ -98,7 +93,7 @@ const EditDeleteMenu: FC<EditDeleteMenuProps> = (props) => {
                 Confirm
               </Button>
             </View>
-          </Modal.Footer>
+          </Modal.Body>
         </Modal.Content>
       </Modal>
     </>

@@ -51,9 +51,10 @@ const ScenarioDialogInComparison = ({
   }
 
   return (
-    <Modal avoidKeyboard isOpen={isModalOpen} onClose={handleClose} size="full">
+    <Modal avoidKeyboard isOpen={isModalOpen} onClose={handleClose}>
       <Modal.Content style={{ backgroundColor: background }}>
         <Modal.Header style={{ backgroundColor: background }}>
+          <Modal.CloseButton />
           <View>
             <Text fontSize={FontSizes.size15} color={textColor}>
               Add Scenario to this comparison.

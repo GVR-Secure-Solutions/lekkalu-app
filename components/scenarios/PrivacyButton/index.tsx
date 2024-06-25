@@ -30,9 +30,9 @@ const PrivacyButtonForScenario = ({ isPublic, handleMutation, isSuccess, isLoadi
       <Dialog open={isDialogOpen} onOpenChange={(value) => setIsDialogOpen(value)}>
         <Dialog.Portal key={'Privacy-dialog-portal'}>
           <Dialog.Overlay key={'overlay'} onPress={() => setIsDialogOpen(false)} />
-          <Dialog.Content style={{ width: '100%' }} key={'Privacy-dialog-content'}>
+          <Dialog.Content style={{ width: '90%' }} key={'Privacy-dialog-content'}>
             <Dialog.Title>
-              <Text fontSize={FontSizes.size14}>
+              <Text fontSize={FontSizes.size13}>
                 {`Are you sure you want to make this scenario ${isPublic ? 'private' : 'public'}`}?
               </Text>
             </Dialog.Title>

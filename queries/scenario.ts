@@ -44,3 +44,8 @@ export async function fetchComparisonById(id: number) {
   const { data } = await v1ApiClient.get<Comparison>(`/comparison/${id}`)
   return data
 }
+
+export async function updateComparison(id: number, dto: Partial<AddComparisonSchema>) {
+  const { data } = await v1ApiClient.put<Comparison>(`/comparison/${id}`, dto)
+  return data
+}

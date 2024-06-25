@@ -10,6 +10,6 @@ export type Comparison = {
   access: 'Private' | 'Public'
   id: number
   name: string
-  scenarios: Array<string>
+  scenarios: Array<number>
   scenarios_objects: Array<Scenario>
 }

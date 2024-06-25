@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { StyleSheet, TouchableOpacity } from 'react-native'
 import { View, Text, Button } from 'tamagui'
 import { FlatList } from 'native-base'
@@ -15,23 +15,29 @@ import KeyboardScrollView from '@/components/keyboard-scroll-view/keyboard-scrol
 import { AddComparisonSchema, addComparisonSchema } from '@/schema/comparisons'
 import InputFields from '@/components/input-fields/input-fields'
 import { COMPARISON_INPUT } from '@/utils/comparisons'
-import { createComparison, fetchScenarios } from '@/queries/scenario'
+import { createComparison, fetchComparisonById, fetchScenarios, updateComparison } from '@/queries/scenario'
 import { COMPARISON, SCENARIO } from '@/utils/query-keys/scenarios'
-import { Scenario as ScenarioType } from '@/types/scenarios'
+import { Comparison, Scenario as ScenarioType } from '@/types/scenarios'
 import ScenarioDialogInComparison from '@/components/comparisons/ScenarioDialog'
 
 const AddComparison = () => {
   const insets = useSafeAreaInsets()
   const params = useLocalSearchParams()
   const qc = useQueryClient()
-  const isEdit: boolean = !!params?.edit
+  const isEdit: boolean = !!params?.isEdit
+  const comparisonId = +params.id
 
   const [isScenarioModalOpen, setIsScenarioModalOpen] = useState(false)
 
+  const { data: comparison, isSuccess: fetchedComparisonByIdSuccessfully } = useQuery({
+    queryKey: [`${COMPARISON.COMPARISON}-${comparisonId}`],
+    queryFn: () => fetchComparisonById(comparisonId),
+  })
+
   const defaultFormValues: AddComparisonSchema = {
-    name: isEdit ? '' : '',
-    access: isEdit ? 'Public' : 'Public',
-    scenarios: isEdit ? [] : [],
+    name: isEdit ? comparison?.name || '' : '',
+    access: isEdit ? comparison?.access : 'Public',
+    scenarios: isEdit ? comparison?.scenarios || [] : [],
   }
 
   const {
@@ -51,6 +57,14 @@ const AddComparison = () => {
     },
   })
 
+  const { mutate: editComparison } = useMutation({
+    mutationFn: (value: Partial<Comparison>) => updateComparison(comparisonId, value),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: [COMPARISON.COMPARISON] })
+      router.replace('/(authenticated)/comparisons')
+    },
+  })
+
   const { data: allScenarios } = useQuery({
     queryKey: [SCENARIO.SCENARIO],
     queryFn: fetchScenarios,
@@ -58,12 +72,22 @@ const AddComparison = () => {
 
   const [scenariosInThisComparison, setScenariosInThisComparison] = useState<Array<ScenarioType>>([])
 
+  useEffect(() => {
+    if (fetchedComparisonByIdSuccessfully) {
+      setScenariosInThisComparison(comparison?.scenarios_objects)
+    }
+  }, [comparison, fetchedComparisonByIdSuccessfully])
+
   const handleFormSubmitButton = (values: AddComparisonSchema) => {
     const _values = {
       ...values,
       scenarios: scenariosInThisComparison?.map((each) => each?.id),
     }
-    addComparison(_values)
+    if (isEdit) {
+      editComparison(_values)
+    } else {
+      addComparison(_values)
+    }
   }
 
   const removeScenarioFromThisComparison = (id: number) => {

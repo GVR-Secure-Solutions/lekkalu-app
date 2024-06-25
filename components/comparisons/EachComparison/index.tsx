@@ -36,7 +36,12 @@ const EachComparison = ({ access, name, id }: EachComparisonType) => {
       </View>
       <View als={'flex-start'}>
         <EditDeleteMenu
-          onEdit={() => {}}
+          onEdit={() =>
+            router.push({
+              pathname: '/(authenticated)/comparisons/add',
+              params: { isEdit: 'true', id },
+            })
+          }
           onDelete={() => {}}
           extraMenus={[{ name: `Set to ${access === 'Private' ? 'Public' : 'Private'}`, onPress: () => {} }]}
         />

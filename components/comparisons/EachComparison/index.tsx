@@ -2,9 +2,13 @@ import React from 'react'
 import { TouchableOpacity, StyleSheet } from 'react-native'
 import { Unlock, Lock } from '@tamagui/lucide-icons'
 import { router } from 'expo-router'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { View, Text, useTheme } from 'tamagui'
 import EditDeleteMenu from '@/components/edit-delete-menu'
 import { hp, wp } from '@/utils/responsive'
+import { deleteComparison, updateComparison } from '@/queries/scenario'
+import { COMPARISON } from '@/utils/query-keys/scenarios'
+import { AddComparisonSchema } from '@/schema/comparisons'
 
 type EachComparisonType = {
   access: 'Private' | 'Public'
@@ -14,12 +18,31 @@ type EachComparisonType = {
 
 const EachComparison = ({ access, name, id }: EachComparisonType) => {
   const theme = useTheme()
+  const qc = useQueryClient()
 
   const handleNavigationToComparison = () => {
     router.push({
       pathname: `/(authenticated)/comparisons/${id})`,
       params: { id },
     })
+  }
+
+  const { mutate: remove } = useMutation({
+    mutationFn: () => deleteComparison(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: [COMPARISON.COMPARISON] })
+    },
+  })
+
+  const { mutate: updatePrivacy } = useMutation({
+    mutationFn: (values: Partial<AddComparisonSchema>) => updateComparison(id, values),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: [COMPARISON.COMPARISON] })
+    },
+  })
+
+  const handlePrivacyChange = (value: 'Private' | 'Public') => {
+    updatePrivacy({ access: value })
   }
 
   return (
@@ -42,8 +65,13 @@ const EachComparison = ({ access, name, id }: EachComparisonType) => {
               params: { isEdit: 'true', id },
             })
           }
-          onDelete={() => {}}
-          extraMenus={[{ name: `Set to ${access === 'Private' ? 'Public' : 'Private'}`, onPress: () => {} }]}
+          onDelete={remove}
+          extraMenus={[
+            {
+              name: `Set to ${access === 'Private' ? 'Public' : 'Private'}`,
+              onPress: () => handlePrivacyChange(access === 'Private' ? 'Public' : 'Private'),
+            },
+          ]}
         />
       </View>
     </TouchableOpacity>

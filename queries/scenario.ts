@@ -49,3 +49,8 @@ export async function updateComparison(id: number, dto: Partial<AddComparisonSch
   const { data } = await v1ApiClient.put<Comparison>(`/comparison/${id}`, dto)
   return data
 }
+
+export async function deleteComparison(id: number) {
+  const { data } = await v1ApiClient.delete<Comparison>(`/comparison/${id}`)
+  return data
+}

@@ -39,3 +39,8 @@ export async function createComparison(dto: AddComparisonSchema) {
   const { data } = await v1ApiClient.post<Comparison>('/comparison/', dto)
   return data
 }
+
+export async function fetchComparisonById(id: number) {
+  const { data } = await v1ApiClient.get<Comparison>(`/comparison/${id}`)
+  return data
+}

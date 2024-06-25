@@ -11,5 +11,5 @@ export type Comparison = {
   id: number
   name: string
   scenarios: Array<string>
-  scemarios_objects: Array<Scenario>
+  scenarios_objects: Array<Scenario>
 }

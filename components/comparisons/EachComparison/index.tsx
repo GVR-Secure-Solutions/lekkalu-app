@@ -1,6 +1,7 @@
 import React from 'react'
 import { TouchableOpacity, StyleSheet } from 'react-native'
 import { Unlock, Lock } from '@tamagui/lucide-icons'
+import { router } from 'expo-router'
 import { View, Text, useTheme } from 'tamagui'
 import EditDeleteMenu from '@/components/edit-delete-menu'
 import { hp, wp } from '@/utils/responsive'
@@ -13,10 +14,18 @@ type EachComparisonType = {
 
 const EachComparison = ({ access, name, id }: EachComparisonType) => {
   const theme = useTheme()
+
+  const handleNavigationToComparison = () => {
+    router.push({
+      pathname: `/(authenticated)/comparisons/${id})`,
+      params: { id },
+    })
+  }
+
   return (
     <TouchableOpacity
       key={id}
-      onPress={() => {}}
+      onPress={handleNavigationToComparison}
       style={[styles.container, { backgroundColor: theme.background.get() }]}
     >
       <View display={'flex'} fd="row" gap={20}>

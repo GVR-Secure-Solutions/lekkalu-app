@@ -69,7 +69,11 @@ const EditDeleteMenu: FC<EditDeleteMenuProps> = (props) => {
         </MenuItem>
         {props.extraMenus ? (
           props.extraMenus?.map((each) => (
-            <MenuItem key={each?.name} textStyle={each?.style} onPress={each?.onPress}>
+            <MenuItem
+              key={each?.name}
+              textStyle={{ color: theme.foreground.get(), ...each?.style }}
+              onPress={each?.onPress}
+            >
               {each?.name}
             </MenuItem>
           ))
@@ -79,9 +83,9 @@ const EditDeleteMenu: FC<EditDeleteMenuProps> = (props) => {
       </Menu>
       <Modal isOpen={viewDeleteDialog} onClose={() => setViewDeleteDialog(false)}>
         <Modal.Content>
-          <Modal.Body>
+          <Modal.Body background={theme.background.get()}>
             <View>
-              <Text color={theme.foreground.get()} fontSize={FontSizes.size13}>
+              <Text color={theme.foreground.get()} fontSize={FontSizes.size15}>
                 Are you sure you want to delete this?
               </Text>
             </View>

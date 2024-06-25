@@ -77,7 +77,7 @@ const AddComparison = () => {
   }, [scenariosInThisComparison, allScenarios])
 
   const handleAddScenarioToComparison = (scenarios: ScenarioType[]) => {
-    setScenariosInThisComparison(scenarios)
+    setScenariosInThisComparison([...scenariosInThisComparison, ...scenarios])
     setIsScenarioModalOpen(false)
   }
 

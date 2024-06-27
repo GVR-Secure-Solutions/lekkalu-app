@@ -11,6 +11,7 @@ interface EditDeleteMenuProps {
   onEdit?: () => void
   onDelete?: () => void
   extraMenus?: Array<{ style?: {}; name: string; onPress: () => void }>
+  deleteMessage?: string
 }
 
 const EditDeleteMenu: FC<EditDeleteMenuProps> = (props) => {
@@ -86,7 +87,7 @@ const EditDeleteMenu: FC<EditDeleteMenuProps> = (props) => {
           <Modal.Body background={theme.background.get()}>
             <View>
               <Text color={theme.foreground.get()} fontSize={FontSizes.size15}>
-                Are you sure you want to delete this?
+                {props.deleteMessage || 'Are you sure you want to delete this?'}
               </Text>
             </View>
             <View f={1} fd={'row'} gap={'$5'} mt={'$3'}>

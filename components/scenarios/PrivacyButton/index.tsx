@@ -39,17 +39,17 @@ const PrivacyButtonForScenario = ({
           <Dialog.Overlay key={'overlay'} onPress={() => setIsDialogOpen(false)} />
           <Dialog.Content style={{ width: '90%' }} key={'Privacy-dialog-content'}>
             <Dialog.Title>
-              <Text fontSize={FontSizes.size13}>
+              <Text fontSize={FontSizes.size13} lineHeight={'$1'}>
                 {`Are you sure you want to make this ${name} ${isPublic ? 'private' : 'public'}`}?
               </Text>
             </Dialog.Title>
-            <View mt={10}>
+            <View mt={15}>
               <View fd="row" gap={20}>
-                <Button onPress={onPressYes} flex={1}>
-                  {isLoading ? <Spinner /> : 'Yes'}
-                </Button>
                 <Button flex={1} onPress={() => setIsDialogOpen(false)}>
                   No
+                </Button>
+                <Button onPress={onPressYes} flex={1} backgroundColor={'$primary'} color="white">
+                  {isLoading ? <Spinner /> : 'Yes'}
                 </Button>
               </View>
             </View>

@@ -173,7 +173,7 @@ export default function ScenarioWithId() {
     <View f={1} pt={insets.top + hp(2)} bg="$backgroundHover">
       <View fd="row" ml={wp(5)} mr={wp(14)}>
         <View fd="row" columnGap={wp(4)}>
-          <BackButton onPress={() => router.push('/(authenticated)/scenarios/')} />
+          <BackButton onPress={handleBack} />
           <Text fontSize={FontSizes.size20} fontFamily={'$heading'} w={'85%'}>
             {scenario?.name}
           </Text>

@@ -51,7 +51,7 @@ const ScenarioDialogInComparison = ({
   }
 
   return (
-    <Modal avoidKeyboard isOpen={isModalOpen} onClose={handleClose}>
+    <Modal avoidKeyboard isOpen={isModalOpen} onClose={handleClose} size={'full'}>
       <Modal.Content style={{ backgroundColor: background }}>
         <Modal.Header style={{ backgroundColor: background }}>
           <Modal.CloseButton />

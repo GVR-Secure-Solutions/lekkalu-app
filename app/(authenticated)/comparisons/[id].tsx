@@ -1,10 +1,24 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { TouchableOpacity } from 'react-native'
+import { TouchableOpacity, StyleSheet } from 'react-native'
 import { View, Text } from 'tamagui'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { FlatList } from 'native-base'
+import { FlatList, Toast } from 'native-base'
+
+import {
+  GridComponent,
+  ToolboxComponent,
+  DataZoomComponent,
+  LegendComponent,
+  TooltipComponent,
+} from 'echarts/components'
+import { LineChart as LC } from 'echarts/charts'
+import { SVGRenderer } from '@wuba/react-native-echarts'
 import { router, useLocalSearchParams } from 'expo-router'
+import * as echarts from 'echarts/core'
+
+import dayjs from 'dayjs'
+import { LineChart as LineChartIcon } from '@tamagui/lucide-icons'
 import { hp, wp } from '@/utils/responsive'
 import BackButton from '@/components/back-button/back-button'
 import { COMPARISON, SCENARIO } from '@/utils/query-keys/scenarios'
@@ -15,12 +29,22 @@ import EditDeleteMenu from '@/components/edit-delete-menu/edit-delete-menu'
 import ScenarioDialogInComparison from '@/components/comparisons/ScenarioDialog'
 import { Scenario } from '@/types/scenarios'
 import { AddComparisonSchema } from '@/schema/comparisons'
+import { tokenClient } from '@/utils/client'
+import { useImaginaryAuth } from '@/hooks/use-imaginary-auth'
+import { GoalItemType } from '@/queries/goal'
+import { mergeArraysByDate } from '@/utils/comparison-timeline'
+import LineChart from '@/components/LineChart'
+import { SERVER_DATE_FORMAT } from '@/utils/constants'
+import { formatIndianMoneyNotation } from '@/utils/fn'
+
+echarts.use([SVGRenderer, GridComponent, LegendComponent, DataZoomComponent, TooltipComponent, ToolboxComponent, LC])
 
 const ComparisonWithId = () => {
   const insets = useSafeAreaInsets()
   const params = useLocalSearchParams()
   const comparisonId = +params.id
   const [isAddScenarioModalOpen, setIsAddScenarioModalOpen] = useState(false)
+  const { getAPIClientForImaginaryUser } = useImaginaryAuth()
 
   const { data: comparison, refetch: refetchComparison } = useQuery({
     queryKey: [`${COMPARISON.COMPARISON}-${comparisonId}`],
@@ -56,6 +80,110 @@ const ComparisonWithId = () => {
   const handleRemoveScenarioFromThisComparison = (id: number) => {
     const updatedScenarios = comparison?.scenarios.filter((each) => each !== id)
     editComparison({ scenarios: updatedScenarios })
+  }
+
+  // graph related functions.
+
+  const [timelineData, setTimelineData] = useState<any>()
+  const [calculatedTimelineData, setCalculatedTimelineData] = useState<any>()
+
+  const skiaRef = useRef<any>(null)
+
+  const timelineDataAPICall = async (dto: { username: string; password: string; scenarioName: string }) => {
+    const loginResponse = await tokenClient.post('/', dto)
+    const apiClient = getAPIClientForImaginaryUser(loginResponse.data.access, 'v2')
+    const goalData = await apiClient.get<GoalItemType[]>('financial_goal/')
+    const timelineData = await apiClient.get(`financial_goal/timeline/${goalData?.data[0]?.id}/`)
+    return { [dto.scenarioName]: timelineData.data }
+  }
+
+  useEffect(() => {
+    let chart: any
+    if (calculatedTimelineData) {
+      const option = {
+        backgroundColor: 'transparent',
+        tooltip: {
+          trigger: 'axis',
+          confine: true,
+        },
+        xAxis: {
+          type: 'category',
+          boundryGap: false,
+          data: calculatedTimelineData?.map((each: any) => dayjs(each?.time)?.format(SERVER_DATE_FORMAT)),
+          axisLabel: {
+            hideOverlap: true,
+            showMinLabel: true,
+            showMaxLabel: true,
+          },
+          offset: 10,
+        },
+        grid: {
+          containLabel: true,
+          // left: 80,
+        },
+        yAxis: {
+          type: 'value',
+          logBase: 10,
+          scale: true,
+          axisLabel: {
+            formatter: (val: number) => formatIndianMoneyNotation(val),
+          },
+        },
+        animationDurationUpdate: 0,
+        series: Object.keys(timelineData)?.map((timeline) => {
+          return {
+            data: calculatedTimelineData.map((each: any) => each[timeline]),
+            type: 'line',
+            name: timeline,
+            smooth: true,
+          }
+        }),
+      }
+      if (skiaRef.current) {
+        chart = echarts.init(skiaRef.current, 'dark', {
+          renderer: 'svg',
+          width: 350,
+          height: 350,
+        })
+      }
+      chart?.setOption(option)
+    }
+    return () => {
+      chart?.dispose()
+    }
+  }, [calculatedTimelineData, timelineData])
+
+  const {
+    mutate: login,
+    isSuccess,
+    isPending,
+  } = useMutation({
+    mutationFn: async ({ password, username, scenarioName }: any) => {
+      const results = await timelineDataAPICall({ password, username, scenarioName })
+      return results
+    },
+    onSuccess: (data) => {
+      setTimelineData((prevData: any) => {
+        return { ...prevData, ...data }
+      })
+    },
+    onError: () => {
+      Toast.show({ description: 'Something went wrong, Please try again.' })
+    },
+  })
+
+  useEffect(() => {
+    if (!isPending && isSuccess) {
+      const result = mergeArraysByDate(timelineData)
+      setCalculatedTimelineData(result)
+    }
+  }, [isSuccess, isPending, timelineData])
+
+  const handleSimulate = () => {
+    setTimelineData({})
+    comparison?.scenarios_objects?.forEach((each) => {
+      login({ password: each?.imag_password, username: each?.imag_username, scenarioName: each?.name })
+    })
   }
 
   return (
@@ -124,8 +252,28 @@ const ComparisonWithId = () => {
             )}
           />
         </View>
-        <View bg={'$background'} mx={'$5'} my={'$5'} p={'$4'}>
-          <Text color={'gray'}>Graph here</Text>
+        <View bg={'$background'} mx={'$5'} my={'$5'} p={'$4'} br={'$5'}>
+          {calculatedTimelineData ? (
+            <View>
+              <Text>Graph</Text>
+            </View>
+          ) : (
+            <TouchableOpacity onPress={handleSimulate} style={{ width: 'auto' }}>
+              <Text color={'$foreground'}>Press to view chart</Text>
+            </TouchableOpacity>
+          )}
+          {calculatedTimelineData && !isPending && (
+            <View h={350} ml={'$-6'}>
+              <LineChart ref={skiaRef} />
+            </View>
+          )}
+          {isPending ? (
+            <View mt={'$1'}>
+              <Text color={'$foreground'}>Loading...</Text>
+            </View>
+          ) : (
+            <></>
+          )}
         </View>
       </View>
       <ScenarioDialogInComparison
@@ -134,8 +282,26 @@ const ComparisonWithId = () => {
         handleModalClose={() => setIsAddScenarioModalOpen(false)}
         isModalOpen={isAddScenarioModalOpen}
       />
+      <TouchableOpacity style={styles.fab} onPress={handleSimulate}>
+        <LineChartIcon />
+      </TouchableOpacity>
     </>
   )
 }
+
+const styles = StyleSheet.create({
+  fab: {
+    height: wp(12),
+    width: wp(12),
+    borderRadius: wp(6),
+    backgroundColor: THEME_COLORS.primary[500],
+    justifyContent: 'center',
+    alignItems: 'center',
+    bottom: hp(3),
+    position: 'absolute',
+    right: wp(8),
+  },
+  entityButton: { padding: 20 },
+})
 
 export default ComparisonWithId

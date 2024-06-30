@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { TouchableOpacity, StyleSheet } from 'react-native'
+import { TouchableOpacity, StyleSheet, Share } from 'react-native'
 import { View, Text } from 'tamagui'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { FlatList, Toast } from 'native-base'
@@ -18,7 +18,7 @@ import { router, useLocalSearchParams } from 'expo-router'
 import * as echarts from 'echarts/core'
 
 import dayjs from 'dayjs'
-import { LineChart as LineChartIcon } from '@tamagui/lucide-icons'
+import { LineChart as LineChartIcon, Share as ShareIcon } from '@tamagui/lucide-icons'
 import { hp, wp } from '@/utils/responsive'
 import BackButton from '@/components/back-button/back-button'
 import { COMPARISON, SCENARIO } from '@/utils/query-keys/scenarios'
@@ -186,15 +186,27 @@ const ComparisonWithId = () => {
     })
   }
 
+  const handleShare = async () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const result = await Share.share({
+      title: 'Share this comparison',
+      url: 'https://finuncle.com/scenarios/121',
+      message: 'https://finuncle.com/scenarios/121',
+    })
+  }
+
   return (
     <>
       <View f={1} pt={insets.top + hp(2)} bg={'$backgroundHover'}>
         <View fd="row" ml={wp(5)} mr={wp(14)}>
           <View fd={'row'} columnGap={wp(4)}>
             <BackButton onPress={() => router.replace('/(authenticated)/comparisons')} />
-            <Text fontSize={FontSizes.size15} fontFamily={'$heading'} w={'90%'}>
+            <Text fontSize={FontSizes.size15} fontFamily={'$heading'} w={'75%'}>
               {comparison?.name}
             </Text>
+            <View>
+              <ShareIcon onPress={handleShare} />
+            </View>
           </View>
         </View>
         <View ml={wp(5)} mr={wp(5)} mt={20} backgroundColor={'$background'} br={'$5'} p="$4">
@@ -208,7 +220,7 @@ const ComparisonWithId = () => {
           </View>
           <FlatList
             style={{ marginTop: 20, maxHeight: 120 }}
-            contentContainerStyle={{ gap: 20, height: 100, paddingRight: 50 }}
+            contentContainerStyle={{ gap: 20, height: 100, paddingRight: 15 }}
             data={comparison?.scenarios_objects}
             horizontal
             showsHorizontalScrollIndicator
@@ -233,7 +245,7 @@ const ComparisonWithId = () => {
                 onPress={() => {
                   router.push({
                     pathname: `/(authenticated)/scenarios/${item?.id}`,
-                    params: { id: item?.id },
+                    params: { id: item?.id, backToComparison: String(comparisonId) },
                   })
                 }}
               >
@@ -244,7 +256,11 @@ const ComparisonWithId = () => {
                   onEdit={() => {
                     router.push({
                       pathname: '/(authenticated)/scenarios/add',
-                      params: { scenarioDetails: JSON.stringify(item), edit: 'true' },
+                      params: {
+                        scenarioDetails: JSON.stringify(item),
+                        edit: 'true',
+                        backToComparison: String(comparisonId),
+                      },
                     })
                   }}
                 />
@@ -283,7 +299,7 @@ const ComparisonWithId = () => {
         isModalOpen={isAddScenarioModalOpen}
       />
       <TouchableOpacity style={styles.fab} onPress={handleSimulate}>
-        <LineChartIcon />
+        <LineChartIcon color={'white'} />
       </TouchableOpacity>
     </>
   )
@@ -301,7 +317,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: wp(8),
   },
-  entityButton: { padding: 20 },
 })
 
 export default ComparisonWithId

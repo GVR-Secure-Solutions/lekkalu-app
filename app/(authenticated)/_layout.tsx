@@ -44,11 +44,20 @@ export default function AuthenticatedAppLayout() {
         },
         tabBarItemStyle: { paddingHorizontal: wp(2) },
         header: ({ options, route }) => {
-          const showBackbutton = ['create-expense', 'update-expense/[id]'].includes(route.name)
+          const showBackbutton = [
+            'create-expense',
+            'create-lending-account',
+            'update-expense/[id]',
+            'lending-account/[id]',
+            'update-lending-account/[id]',
+          ].includes(route.name)
 
           const backScreenKeys: Record<string, string> = {
             'create-expense': 'expenses',
             'update-expense/[id]': 'expenses',
+            'create-lending-account': 'lending',
+            'lending-account/[id]': 'lending',
+            'update-lending-account/[id]': 'lending',
           }
 
           return (
@@ -56,7 +65,7 @@ export default function AuthenticatedAppLayout() {
               <View w="100%" h={wp(1)} bg="$background" pt={top} />
               <View fd="row" bg="$background" ai="center" px={wp(4)} py={hp(1.8)}>
                 {showBackbutton && (
-                  <TouchableOpacity onPress={() => router.push(backScreenKeys[route.name as any])}>
+                  <TouchableOpacity onPress={() => router.push(backScreenKeys[route.name] as any)}>
                     <Entypo
                       name="chevron-thin-left"
                       size={wp(5)}
@@ -98,7 +107,14 @@ export default function AuthenticatedAppLayout() {
           tabBarLabel: ({ focused, children }) => <TabBarLabel focused={focused}>{children}</TabBarLabel>,
         }}
       />
-
+      <Tabs.Screen
+        name="lending"
+        options={{
+          title: 'Lend & Borrow',
+          tabBarIcon: ({ focused }) => <TabBarIcon name="solution1" focused={focused} />,
+          tabBarLabel: ({ focused, children }) => <TabBarLabel focused={focused}>{children}</TabBarLabel>,
+        }}
+      />
       <Tabs.Screen
         name="settings"
         options={{
@@ -108,7 +124,22 @@ export default function AuthenticatedAppLayout() {
           tabBarLabel: ({ focused, children }) => <TabBarLabel focused={focused}>{children}</TabBarLabel>,
         }}
       />
-
+      <Tabs.Screen
+        name="create-lending-account"
+        options={{
+          title: 'Create Lending Account',
+          href: null,
+          unmountOnBlur: true,
+        }}
+      />
+      <Tabs.Screen
+        name="update-lending-account/[id]"
+        options={{
+          title: 'Edit Lending Account',
+          href: null,
+          unmountOnBlur: true,
+        }}
+      />
       <Tabs.Screen
         name="create-expense"
         options={{
@@ -122,6 +153,22 @@ export default function AuthenticatedAppLayout() {
         name="update-expense/[id]"
         options={{
           title: 'Update Expense',
+          href: null,
+          unmountOnBlur: true,
+        }}
+      />
+      <Tabs.Screen
+        name="update-lending-transaction/[id]"
+        options={{
+          title: 'Update Lending Transaction',
+          href: null,
+          unmountOnBlur: true,
+        }}
+      />
+      <Tabs.Screen
+        name="lending-account/[id]"
+        options={{
+          title: 'Account Transaction',
           href: null,
           unmountOnBlur: true,
         }}
@@ -215,9 +262,9 @@ export default function AuthenticatedAppLayout() {
       />
       <Tabs.Screen
         name="budget"
-        options={{          
+        options={{
           href: null,
-          headerShown:false,          
+          headerShown: false,
           unmountOnBlur: true,
         }}
       />

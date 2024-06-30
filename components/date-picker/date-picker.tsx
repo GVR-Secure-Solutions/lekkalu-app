@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Icon } from 'native-base'
 import { Fontisto } from '@expo/vector-icons'
 import dayjs from 'dayjs'
@@ -30,6 +30,11 @@ export default function DatePicker({ placeholder, value, onChange, maximumDate, 
   const showDatePicker = () => {
     setIsDatePickerVisible(true)
   }
+  useEffect(() => {
+    if (value) {
+      setDate(value)
+    }
+  }, [value])
 
   return (
     <View>

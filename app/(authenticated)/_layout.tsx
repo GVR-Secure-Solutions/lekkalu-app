@@ -215,9 +215,57 @@ export default function AuthenticatedAppLayout() {
       />
       <Tabs.Screen
         name="budget"
-        options={{          
+        options={{
           href: null,
-          headerShown:false,          
+          headerShown: false,
+          unmountOnBlur: true,
+        }}
+      />
+      <Tabs.Screen
+        name="scenarios/index"
+        options={{
+          href: null,
+          headerShown: false,
+          unmountOnBlur: true,
+        }}
+      />
+      <Tabs.Screen
+        name="scenarios/add"
+        options={{
+          href: null,
+          headerShown: false,
+          unmountOnBlur: true,
+        }}
+      />
+      <Tabs.Screen
+        name="scenarios/[id]"
+        options={{
+          href: null,
+          headerShown: false,
+          unmountOnBlur: true,
+        }}
+      />
+      <Tabs.Screen
+        name="comparisons/index"
+        options={{
+          href: null,
+          headerShown: false,
+          unmountOnBlur: true,
+        }}
+      />
+      <Tabs.Screen
+        name="comparisons/add"
+        options={{
+          href: null,
+          headerShown: false,
+          unmountOnBlur: true,
+        }}
+      />
+      <Tabs.Screen
+        name="comparisons/[id]"
+        options={{
+          href: null,
+          headerShown: false,
           unmountOnBlur: true,
         }}
       />

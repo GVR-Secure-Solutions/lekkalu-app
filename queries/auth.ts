@@ -55,3 +55,8 @@ export const deleteAccount = async () => {
 export const useGetUserDetails = () => {
   return useQuery({ queryFn: fetchUser, queryKey: [AUTH.USER_DATA] })
 }
+
+export async function loginImaginaryUser(dto: Omit<LoginSchema, 'rememberMe'> & { id: number }) {
+  const { data } = await tokenClient.post<{ access: string; refresh: string }>('/', dto)
+  return { ...data, username: dto.username, id: dto.id }
+}

@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { router } from 'expo-router'
 import { useToast } from 'native-base'
+import { AxiosInstance } from 'axios'
 
 import { GOAL_QUERY_KEYS } from '@/utils/query-keys/goal'
 import { apiClient, apiv2Client } from '@/utils/client'
@@ -194,6 +195,11 @@ const useDeleteGoal = () => {
   })
 }
 
+async function addGoalForImaginaryUser(dto: any, apiClient: AxiosInstance) {
+  const { data } = await apiClient.post('financial_goal/', dto)
+  return data
+}
+
 export {
   useGetGoalKpiData,
   useGetProportionality,
@@ -212,4 +218,5 @@ export {
   GoalProgressType,
   GoalTimelineItem,
   EditGoalPayloadType,
+  addGoalForImaginaryUser,
 }

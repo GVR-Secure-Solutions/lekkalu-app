@@ -104,10 +104,18 @@ const AddScenarios = () => {
     }
   }
 
+  const handleBack = () => {
+    if (params.backToComparison) {
+      router.push(`/(authenticated)/comparisons/${params.backToComparison}`)
+    } else {
+      router.push('/(authenticated)/scenarios/')
+    }
+  }
+
   return (
     <View f={1} pt={insets.top + hp(2)} bg="$backgroundHover">
       <View fd="row" ai="center" columnGap={wp(4)} mx={wp(5)}>
-        <BackButton onPress={() => router.push('/(authenticated)/scenarios/')} />
+        <BackButton onPress={handleBack} />
         <Text fontSize={FontSizes.size20} fontFamily={'$heading'}>
           {isEdit ? 'Edit scenario' : 'Create a new scenario'}
         </Text>

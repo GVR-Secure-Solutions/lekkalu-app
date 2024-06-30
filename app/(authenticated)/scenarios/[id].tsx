@@ -63,7 +63,11 @@ export default function ScenarioWithId() {
   })
 
   function handleBack() {
-    router.push('/(authenticated)/scenarios/')
+    if (params.backToComparison) {
+      router.push(`/(authenticated)/comparisons/${params.backToComparison}`)
+    } else {
+      router.push('/(authenticated)/scenarios/')
+    }
     return true
   }
 

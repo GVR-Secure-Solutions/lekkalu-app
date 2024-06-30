@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useColorScheme } from 'react-native'
 import { Modal } from 'native-base'
 import { View, Text, Button } from 'tamagui'
@@ -30,7 +30,6 @@ const ScenarioDialogInComparison = ({
   }
 
   const handleClose = () => {
-    setSelectedScenarios([])
     handleModalClose()
   }
 
@@ -47,8 +46,13 @@ const ScenarioDialogInComparison = ({
 
   const handleAddPress = () => {
     handleAdd(selectedScenarios)
-    setSelectedScenarios([])
   }
+
+  useEffect(() => {
+    return () => {
+      setSelectedScenarios([])
+    }
+  }, [])
 
   return (
     <Modal avoidKeyboard isOpen={isModalOpen} onClose={handleClose} size={'full'}>

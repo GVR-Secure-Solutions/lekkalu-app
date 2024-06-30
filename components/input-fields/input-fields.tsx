@@ -1,5 +1,5 @@
 import { Control, Controller, ControllerRenderProps, FieldErrors, FieldValues } from 'react-hook-form'
-import { CheckIcon, FormControl, Input, Select, TextArea, Radio } from 'native-base'
+import { FormControl, Input, Select, TextArea, Radio } from 'native-base'
 import { useCallback } from 'react'
 import { omit } from 'lodash'
 import MultiSelect from 'react-native-multiple-select'
@@ -66,10 +66,9 @@ export default function InputFields({ inputs, control, errors }: InputFieldsProp
               {...omit(field, 'ref', 'value')}
               placeholder={input.label}
               _selectedItem={{
-                bg: tamagtheme.backgroundHover.get(),
-                endIcon: <CheckIcon size={5} />,
+                bg: theme.colors.brand[900],
+                _text: { color: 'white', fontSize: FontSizes.size18 },
                 borderRadius: wp(2),
-                _icon: { color: tamagtheme.foreground.get() },
               }}
               height={hp(5)}
               fontSize={FontSizes.size15}
@@ -77,16 +76,16 @@ export default function InputFields({ inputs, control, errors }: InputFieldsProp
               selectedValue={field.value?.toString()}
               onValueChange={field.onChange}
               _text={{ style: { color: tamagtheme.foreground?.get() } }}
-              color={tamagtheme.foreground.get()}
-              _actionSheetContent={{ bg: tamagtheme.backgroundHover.get() }}
+              color={inputColor}
+              _actionSheetContent={{ bg: systemTheme === 'dark' ? tamagtheme.backgroundHover.get() : 'white' }}
             >
               {input.options.map((option) => (
                 <Select.Item
                   _text={{
-                    color: tamagtheme.foreground.get(),
+                    color: inputColor,
                     fontSize: FontSizes.size18,
                   }}
-                  bg={tamagtheme.backgroundHover.get()}
+                  bg={systemTheme === 'dark' ? tamagtheme.backgroundHover.get() : 'white'}
                   key={option.id}
                   label={option.label}
                   value={option[input.valueKey || 'id']?.toString()}

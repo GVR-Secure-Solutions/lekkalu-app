@@ -12,6 +12,7 @@ import { queryClient } from '@/utils/query-client'
 import config from '@/tamagui.config'
 import EmiCalculatorProvider from '@/context/emi-calculator-provider'
 import AppContextProvider from '@/context/app-context-provider'
+import CagrCalculatorProvider from '@/context/cagr-calculator-provider'
 
 export const theme = extendTheme({ colors: THEME_COLORS })
 
@@ -39,7 +40,9 @@ export default function AppLayout() {
             <AuthProvider>
               <Theme name={colorScheme === 'dark' ? 'dark' : 'light'}>
                 <EmiCalculatorProvider>
+                  <CagrCalculatorProvider>
                   <Slot />
+                  </CagrCalculatorProvider>
                 </EmiCalculatorProvider>
               </Theme>
             </AuthProvider>

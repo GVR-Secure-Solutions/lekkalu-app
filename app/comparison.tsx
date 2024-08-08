@@ -32,6 +32,7 @@ import { tokenClient } from '@/utils/client'
 import { useImaginaryAuth } from '@/hooks/use-imaginary-auth'
 import { GoalItemType } from '@/queries/goal'
 import AuthenticationCardForUnAuthenticatedUsers from '@/components/AuthenticationCardForUnAuthenticatedUsers'
+import { WEB_URL } from '@/utils/constant/constant'
 
 echarts.use([SVGRenderer, GridComponent, LegendComponent, DataZoomComponent, TooltipComponent, ToolboxComponent, LC])
 
@@ -49,7 +50,7 @@ const ComparisonForUnAuthenticatedUser = () => {
   })
 
   async function handleShare() {
-    const sharingLink = `https://www.finuncle.com/comparisons/${comparisonId}`
+    const sharingLink = `${WEB_URL}/comparisons/${comparisonId}`
     await Share.share({
       title: comparison?.name,
       url: sharingLink,

@@ -19,7 +19,21 @@ export function useAuth() {
   const { mutate: fetchUserData, data: userData } = useMutation({
     mutationKey: [AUTH.USER_DATA],
     mutationFn: fetchUser,
+    onSuccess: () => {
+      updateIsLoggedInAsyncStorageValue(true)
+    },
+    onError: () => {
+      updateIsLoggedInAsyncStorageValue(false)
+    },
   })
+
+  async function updateIsLoggedInAsyncStorageValue(value: boolean) {
+    if (value) {
+      await AsyncStorage.setItem('is_logged_in', 'true')
+    } else {
+      await AsyncStorage.removeItem('is_logged_in')
+    }
+  }
 
   const {
     isFetching: isAuthenticationInProgress,

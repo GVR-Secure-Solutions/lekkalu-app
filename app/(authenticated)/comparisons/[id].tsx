@@ -39,6 +39,7 @@ import LineChart from '@/components/LineChart'
 import { SERVER_DATE_FORMAT } from '@/utils/constants'
 import { formatIndianMoneyNotation } from '@/utils/fn'
 import useRerouteUnAuthenticatedUser from '@/hooks/use-reroute-unauthenticated-users'
+import { WEB_URL } from '@/utils/constant/constant'
 
 echarts.use([SVGRenderer, GridComponent, LegendComponent, DataZoomComponent, TooltipComponent, ToolboxComponent, LC])
 
@@ -202,9 +203,9 @@ const ComparisonWithId = () => {
   }
 
   const handleShare = async () => {
-    const sharingLink = `https://www.finuncle.com/comparisons/${comparisonId}`
+    const sharingLink = `${WEB_URL}/comparisons/${comparisonId}`
     await Share.share({
-      title: 'Share this comparison',
+      title: comparison?.name,
       url: sharingLink,
       message: sharingLink,
     })

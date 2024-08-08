@@ -17,12 +17,6 @@ const useScenario = (scenarioId?: number) => {
   const IMAGINARY_USER = qc.getQueryData<any>([AUTH.IMAGINARY_CLIENT])
   const apiClient = getAPIClientForImaginaryUser(IMAGINARY_USER?.access || '')
 
-  useEffect(() => {
-    return () => {
-      queryClient.setQueryData([AUTH.IMAGINARY_CLIENT], {})
-    }
-  }, [])
-
   async function createIncomeExpense(dto: IAddEditIncomeExpenseSchema) {
     const { data } = await apiClient.post('income_expense/', dto)
     return data
@@ -76,7 +70,7 @@ const useScenario = (scenarioId?: number) => {
   }
 
   const getAllScenarioEntitiesQuery = useQuery({
-    queryKey: [`${SCENARIO.SCENARIO_ENTITIES}-${IMAGINARY_USER?.username}-${scenarioId}`],
+    queryKey: [`${SCENARIO.SCENARIO_ENTITIES}-${IMAGINARY_USER?.username}`],
     queryFn: fetchScenarioEntities,
     select: (data) => {
       const income = data?.income?.map((each) => ({

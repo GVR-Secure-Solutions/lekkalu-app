@@ -12,3 +12,5 @@ export const monthName: string[] = [
   'November',
   'December',
 ]
+
+export const WEB_URL = 'https://finuncle.com'
